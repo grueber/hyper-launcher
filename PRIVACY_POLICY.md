@@ -1,7 +1,7 @@
 # Privacy Policy for Hyper Launcher
 
-**Last Updated**: October 30, 2024
-**Version**: 3.2.0
+**Last Updated**: November 25, 2025
+**Version**: 3.3.4
 
 ## Overview
 
@@ -24,10 +24,12 @@ All data is stored **locally on your device** using Chrome's local storage API:
 
 ### What is Stored Locally:
 - **Bookmark URLs** - The web addresses you save
-- **Bookmark Titles** - The names you give to your bookmarks
-- **Favicon URLs** - Website icons for visual identification
-- **User Preferences** - Your settings (view mode, layout, tab behavior)
+- **Bookmark Titles** - The names you give to your bookmarks (editable via Edit Bookmark feature)
+- **Favicon URLs** - Website icons for visual identification (editable via Edit Bookmark feature)
+- **User Preferences** - Your settings (view mode, layout, tab behavior, grid size)
 - **Timestamps** - When bookmarks were created or last used
+- **Favicon Metadata** - Favicon source type and last update time for automatic refresh
+- **Temporary Flags** - Internal flags like "needs favicon regeneration" when you edit bookmark URLs
 
 ### Where is Data Stored:
 - All data remains on your device in Chrome's local storage
@@ -41,38 +43,39 @@ Hyper Launcher requests the following permissions:
 ### Required Permissions:
 
 **Storage**
-- Purpose: Save your bookmarks and preferences locally
-- Scope: Local device only
+- Purpose: Save your bookmarks and preferences locally on your device
+- Scope: Local device only, never transmitted externally
 
 **Active Tab**
-- Purpose: Detect the current page URL when you add a bookmark
-- Scope: Only when you actively click "Add Bookmark"
+- Purpose: Detect the current page URL, title, and favicon when you add a bookmark
+- Scope: Only when you actively click "Add Bookmark" or use keyboard shortcut
+
+**Tabs**
+- Purpose: (1) Bookmark all open tabs at once with one click, (2) Capture tab favicons for better visual identification
+- Scope: Only accesses tabs when you use "Bookmark All Tabs" feature or add bookmarks
 
 **Context Menus**
-- Purpose: Right-click menu option to quickly add bookmarks
+- Purpose: Right-click menu option "Add to Hyper Launcher" to quickly add bookmarks
 - Scope: Only adds a menu item, doesn't access page content
 
 **Notifications**
-- Purpose: Optional notifications for bookmark actions (e.g., "Bookmark added")
-- Scope: Local notifications only
+- Purpose: Optional notifications for bookmark actions (e.g., "Bookmark added", import errors)
+- Scope: Local notifications only, no data transmitted
+
+**Alarms**
+- Purpose: Schedule periodic maintenance tasks (automatic favicon refresh for stale favicons, analytics cleanup)
+- Scope: Background tasks run locally to keep bookmark favicons current
 
 ### Optional Permissions (requested when needed):
 
-**Tabs**
-- Purpose: Bookmark all open tabs at once
-- When: Only when you click "Bookmark All Tabs"
+**Downloads** (Optional)
+- Purpose: Export your bookmarks as a JSON backup file
+- When: Only requested when you click "Export Data"
+- Note: Not required for core functionality
 
-**Downloads**
-- Purpose: Export your bookmarks as a JSON file
-- When: Only when you click "Export Data"
-
-**Bookmarks**
-- Purpose: Future feature to sync with Chrome bookmarks
-- When: Not currently implemented
-
-**Alarms**
-- Purpose: Future feature for scheduled tasks
-- When: Not currently implemented
+**Bookmarks** (Optional)
+- Purpose: Reserved for future feature to sync with Chrome's native bookmarks
+- Status: Not currently implemented or used
 
 ## Third-Party Services
 
@@ -84,7 +87,10 @@ Your data is protected by:
 - **Local-only storage** - Never leaves your device
 - **Chrome's security model** - Protected by browser sandboxing
 - **No network transmission** - No data sent to external servers
-- **Input sanitization** - Protection against malicious input
+- **Input sanitization** - All user input is sanitized to prevent XSS attacks
+- **URL validation** - Dangerous protocols (javascript:, data:, file:) are blocked
+- **Favicon URL validation** - Protection against CSS injection attacks
+- **Prototype pollution protection** - Safe JSON parsing during import operations
 
 ## Data Export & Deletion
 
@@ -109,22 +115,27 @@ Hyper Launcher does not knowingly collect any information from anyone, including
 
 We will update this privacy policy if our data practices change. Changes will be reflected in:
 - The "Last Updated" date above
+- The version number
 - The extension's changelog
 - Chrome Web Store listing
+
+### Recent Updates:
+- **v3.3.4 (November 2025)**: Updated to reflect current permissions (tabs and alarms are now required), added security enhancements, documented Edit Bookmark feature
+- **v3.2.0 (October 2024)**: Initial release with core privacy-first architecture
 
 ## Open Source
 
 Hyper Launcher is open source. You can review the code to verify our privacy practices:
-- GitHub: [Your GitHub Repository URL]
+- GitHub Repository: [To be added - will be included after repository setup]
 - No hidden tracking or data collection
+- All source code publicly available for review
 
 ## Contact
 
 If you have questions about this privacy policy or your data:
 
-- **Email**: [Your Email]
-- **GitHub Issues**: [Your GitHub Issues URL]
-- **Chrome Web Store**: Leave a review with questions
+- **Chrome Web Store**: Leave a review or report an issue through the Chrome Web Store support page
+- **GitHub Issues**: [To be added - will be included after repository setup]
 
 ## Your Rights
 
