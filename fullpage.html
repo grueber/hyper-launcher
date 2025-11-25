@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper Launcher v3.2 - Full Page</title>
+    <link rel="stylesheet" href="design-system.css">
+    <link rel="stylesheet" href="fullpage.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Onboarding Overlay -->
+    <div class="onboarding-overlay" id="onboardingOverlay">
+        <div class="onboarding-content">
+            <div class="onboarding-step active" data-step="1">
+                <div class="onboarding-icon">🚀</div>
+                <h2>Welcome to Hyper Launcher!</h2>
+                <p>Your ADHD-friendly bookmark manager. Let's add your browser tabs to get started.</p>
+                <div class="onboarding-actions">
+                    <button class="btn btn-primary" id="onboardingNext">Add All Browser Tabs</button>
+                    <button class="btn btn-ghost" id="onboardingSkip">Skip Tour</button>
+                </div>
+            </div>
+            
+            <div class="onboarding-step" data-step="2">
+                <div class="onboarding-icon">🏥</div>
+                <h2>Meet the Sickbay</h2>
+                <p>A temporary storage for bookmarks you might need later. Perfect for research tabs!</p>
+                <div class="onboarding-actions">
+                    <button class="btn btn-primary" id="onboardingFinish">Got it!</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Add Popup -->
+    <div class="quick-add-popup" id="quickAddPopup">
+        <h3>Add Custom URL</h3>
+        <form class="quick-add-form" id="quickAddForm">
+            <input type="text" 
+                   class="quick-add-input" 
+                   id="quickAddUrl"
+                   placeholder="example.com or https://example.com" 
+                   required>
+            
+            <input type="text" 
+                   class="quick-add-input" 
+                   id="quickAddName"
+                   placeholder="Name (optional)">
+            
+            <div class="quick-add-toggles">
+                <div class="toggle-group">
+                    <button type="button" class="toggle-btn destination-toggle active" data-destination="main">Main</button>
+                    <button type="button" class="toggle-btn destination-toggle" data-destination="sickbay">Sickbay</button>
+                </div>
+                
+                <div class="toggle-group">
+                    <button type="button" class="toggle-btn placement-toggle active" data-placement="front">Front</button>
+                    <button type="button" class="toggle-btn placement-toggle" data-placement="end">End</button>
+                </div>
+            </div>
+            
+            <div class="quick-add-actions">
+                <button type="button" class="quick-add-btn" id="quickAddCancel">Cancel</button>
+                <button type="submit" class="quick-add-btn primary" id="quickAddSubmit">Add Bookmark</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="layout">
+        <!-- Header - Fixed positioning -->
+        <header class="top-header">
+            <!-- Left Actions -->
+            <div class="header-left-actions">
+                <button class="btn btn-primary" id="addCustomBtn" title="Add custom URL">
+                    <span aria-hidden="true">➕</span>
+                    <span>Add Custom URL</span>
+                </button>
+            </div>
+            
+            <!-- Center Controls -->
+            <div class="header-center">
+                <!-- FIXED: Grid Layout Controls with Correct Numbers -->
+                <div class="grid-layout-controls">
+                    <button class="grid-size-btn" data-size="compact" title="Compact grid (9 columns)">9</button>
+                    <button class="grid-size-btn active" data-size="comfortable" title="Comfortable grid (11 columns)">11</button>
+                    <button class="grid-size-btn" data-size="roomy" title="Roomy grid (22 columns)">22</button>
+                </div>
+
+                <!-- View Controls -->
+                <div class="view-controls" role="tablist" aria-label="View modes">
+                    <button class="view-btn active" 
+                            id="gridViewBtn" 
+                            role="tab"
+                            aria-selected="true"
+                            title="Grid View">
+                        <span class="view-icon" aria-hidden="true">⊞</span>
+                        <span class="view-label">Grid</span>
+                    </button>
+                    <button class="view-btn" 
+                            id="thumbnailViewBtn" 
+                            role="tab"
+                            aria-selected="false"
+                            title="Thumbnail View">
+                        <span class="view-icon" aria-hidden="true">⊟</span>
+                        <span class="view-label">Thumbnails</span>
+                    </button>
+                    <button class="view-btn" 
+                            id="listViewBtn" 
+                            role="tab"
+                            aria-selected="false"
+                            title="List View">
+                        <span class="view-icon" aria-hidden="true">☰</span>
+                        <span class="view-label">List</span>
+                    </button>
+                </div>
+                
+                <!-- Sickbay Button with badge -->
+                <button class="btn sickbay-btn" id="sickbayBtn" title="View Sickbay">
+                    <span>🏥</span>
+                    <span>Sickbay</span>
+                    <span class="sickbay-badge" id="sickbayCount" style="display: none;">0</span>
+                </button>
+            </div>
+            
+            <!-- Right Actions - Fixed positioning -->
+            <div class="header-right-actions">
+                <!-- FIXED: Tab Mode Toggle Switch -->
+                <label class="tab-mode-toggle-switch" title="Toggle opening links in background">
+                    <span class="toggle-label">Background Tabs</span>
+                    <input type="checkbox"
+                           id="tabModeToggle"
+                           class="toggle-checkbox"
+                           checked
+                           aria-label="Toggle opening links in background">
+                    <span class="toggle-slider"></span>
+                </label>
+
+                <!-- FIXED: Settings Menu Dropdown WITHOUT New Tab Override -->
+                <div class="dropdown-container">
+                    <button class="btn btn-icon" id="settingsBtn" title="Settings" aria-haspopup="true" aria-expanded="false">
+                        <span aria-hidden="true">⚙️</span>
+                    </button>
+                    
+                    <div class="dropdown-content" id="settingsDropdown" role="menu" aria-labelledby="settingsBtn">
+                        <button class="dropdown-item" role="menuitem" id="exportBtn" type="button">
+                            <span aria-hidden="true">📤</span>
+                            <span>Export Data</span>
+                        </button>
+                        <button class="dropdown-item" role="menuitem" id="importBtn" type="button">
+                            <span aria-hidden="true">📥</span>
+                            <span>Import Data</span>
+                        </button>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item" role="menuitem" id="clearAllSickbayBtn" type="button">
+                            <span aria-hidden="true">🧹</span>
+                            <span>Clear Sickbay</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Apps Container -->
+                <div class="apps-container" id="appsContainer">
+                    <!-- Apps Grid -->
+                    <div class="apps-grid" id="appsGrid" role="grid" aria-label="Bookmarks">
+                        <!-- Demo apps will be populated by JavaScript -->
+                    </div>
+                    
+                    <!-- Empty State - Properly centered -->
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-state-content">
+                            <div class="empty-state-icon">📚</div>
+                            <h2>No bookmarks yet</h2>
+                            <p>Add your first bookmark using the buttons above</p>
+                            <div class="empty-state-actions">
+                                <button class="btn btn-primary" id="emptyStateAddBtn">
+                                    <span>Add Custom URL</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sickbay Empty State - Properly centered -->
+                    <div class="empty-state" id="sickbayEmptyState">
+                        <div class="empty-state-content">
+                            <div class="empty-state-icon">🏥</div>
+                            <h2>Sickbay is empty</h2>
+                            <p>Add temporary bookmarks here for later sorting</p>
+                            <div class="empty-state-actions">
+                                <button class="btn btn-warning" id="addToSickbayEmptyBtn">Add to Sickbay</button>
+                                <button class="btn btn-ghost" id="backToMainBtn">Back to Main</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Area - Positioned as sibling to content-area for proper absolute positioning -->
+            <div class="search-area" id="searchArea">
+                <div class="search-area-inner">
+                    <!-- Bookmark All Tabs Buttons -->
+                    <div class="bookmark-all-tabs">
+                        <button class="btn btn-primary" id="bookmarkAllTabsMain">
+                            <span>📑</span>
+                            <span>Bookmark All Tabs to Main</span>
+                        </button>
+                        <button class="btn btn-warning" id="bookmarkAllTabsSickbay">
+                            <span>📑</span>
+                            <span>Bookmark All Tabs to Sickbay</span>
+                        </button>
+                    </div>
+
+                    <!-- Search Container -->
+                    <div class="search-container">
+                        <input type="search"
+                               class="search-input"
+                               id="searchInput"
+                               placeholder="Search bookmarks..."
+                               aria-label="Search bookmarks">
+                        <button class="search-clear" id="searchClear" style="display: none;">×</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+        
+        <!-- Footer - Fixed branding -->
+        <footer class="footer">
+            <!-- Stats -->
+            <div class="footer-left">
+                <div class="footer-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Total:</span>
+                        <span class="stat-value" id="totalBookmarks">8</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Sickbay:</span>
+                        <span class="stat-value" id="sickbayBookmarks">3</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">View:</span>
+                        <span class="stat-value" id="currentViewStat">Grid</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Tab Mode:</span>
+                        <span class="stat-value" id="tabModeStat">Background</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Branding - Right aligned with green text and orange badge -->
+            <div class="footer-right">
+                <div class="footer-brand">
+                    <h1 class="brand-title">Hyper Launcher</h1>
+                    <span class="brand-badge">v3.2</span>
+                </div>
+            </div>
+        </footer>
+
+        <!-- FIXED: Clear Sickbay Button - Centered Floating Overlay -->
+        <button class="btn clear-sickbay-btn" id="clearSickbayBtn" title="Clear all Sickbay items">
+            <span>🧹</span>
+            <span>Clear Sickbay</span>
+        </button>
+    </div>
+
+    <!-- Add Dialog -->
+    <div class="modal-overlay" id="addModalOverlay">
+        <div class="modal" role="dialog" aria-labelledby="addModalTitle" aria-modal="true">
+            <div class="modal-header">
+                <h2 id="addModalTitle">Add New Bookmark</h2>
+                <button class="btn btn-icon btn-ghost" id="addModalClose" aria-label="Close dialog">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            
+            <form class="modal-body" id="addForm">
+                <div class="form-group">
+                    <label for="urlInput" class="form-label">URL</label>
+                    <input type="url" 
+                           id="urlInput" 
+                           class="input" 
+                           placeholder="example.com or https://example.com" 
+                           required
+                           aria-describedby="urlHelp">
+                    <div id="urlHelp" class="form-help">Enter the website URL you want to bookmark</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="titleInput" class="form-label">Title (Optional)</label>
+                    <input type="text" 
+                           id="titleInput" 
+                           class="input" 
+                           placeholder="My Bookmark"
+                           aria-describedby="titleHelp">
+                    <button type="button" class="input-clear-btn" id="titleClearBtn" style="display: none;">×</button>
+                    <div id="titleHelp" class="form-help">Leave empty to auto-generate from website</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Add to</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="destination" value="main" checked>
+                            <span class="radio-label">Main Launcher</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="destination" value="sickbay">
+                            <span class="radio-label">Sickbay</span>
+                        </label>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="addModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="addModalSubmit" type="submit" form="addForm">
+                    <span>Add Bookmark</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation -->
+    <div class="modal-overlay" id="deleteModalOverlay">
+        <div class="modal modal-sm" role="dialog" aria-labelledby="deleteModalTitle" aria-modal="true">
+            <div class="modal-header">
+                <h2 id="deleteModalTitle">Delete Bookmark?</h2>
+            </div>
+
+            <div class="modal-body">
+                <p>Are you sure you want to delete "<span id="deleteBookmarkName"></span>"?</p>
+                <p class="text-tertiary text-sm">This action cannot be undone.</p>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="deleteModalCancel">Cancel</button>
+                <button class="btn btn-danger" id="deleteModalConfirm">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Validation Error Modal -->
+    <div class="modal-overlay" id="importValidationModalOverlay">
+        <div class="modal modal-lg" role="dialog" aria-labelledby="importValidationModalTitle" aria-modal="true">
+            <div class="modal-header">
+                <h2 id="importValidationModalTitle">Import Validation Errors</h2>
+            </div>
+
+            <div class="modal-body">
+                <p class="text-warning">The following bookmarks have validation errors:</p>
+                <div id="validationErrorsList" class="validation-errors-list"></div>
+
+                <div class="validation-help">
+                    <h3>How to Fix:</h3>
+                    <ol>
+                        <li>Click "Cancel" to stop the import</li>
+                        <li>Open the JSON file in a text editor</li>
+                        <li>Fix the issues described above or remove the invalid bookmarks</li>
+                        <li>Save the file and try importing again</li>
+                    </ol>
+                    <p><strong>Or:</strong> Click "Skip Invalid Bookmarks" to import only the valid bookmarks.</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="importValidationModalCancel">Cancel</button>
+                <button class="btn btn-warning" id="importValidationModalSkip">Skip Invalid Bookmarks</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Mode Selection Modal -->
+    <div class="modal-overlay" id="importModeModalOverlay">
+        <div class="modal modal-sm" role="dialog" aria-labelledby="importModeModalTitle" aria-modal="true">
+            <div class="modal-header">
+                <h2 id="importModeModalTitle">Import Bookmarks</h2>
+            </div>
+
+            <div class="modal-body">
+                <p>How would you like to import these bookmarks?</p>
+                <div style="margin-top: var(--space-4);">
+                    <p><strong>Replace All:</strong> Remove all existing bookmarks and replace with imported data.</p>
+                    <p style="margin-top: var(--space-2);"><strong>Merge:</strong> Keep existing bookmarks and add only new ones (skip duplicates).</p>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="importModeCancel">Cancel</button>
+                <button class="btn btn-danger" id="importModeReplace">Replace All</button>
+                <button class="btn btn-primary" id="importModeMerge">Merge</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Bookmark Modal -->
+    <div class="modal-overlay" id="editModalOverlay">
+        <div class="modal" role="dialog" aria-labelledby="editModalTitle" aria-modal="true">
+            <div class="modal-header">
+                <h2 id="editModalTitle">Edit Bookmark</h2>
+            </div>
+
+            <form class="modal-body" id="editForm">
+                <div class="form-group">
+                    <label for="editUrl">URL</label>
+                    <input type="text" id="editUrl" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editTitle">Title</label>
+                    <input type="text" id="editTitle" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="editFavicon">Favicon URL (optional)</label>
+                    <input type="text" id="editFavicon" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="editPreserveOriginal">
+                        <span>Preserve original favicon (don't auto-refresh)</span>
+                    </label>
+                </div>
+            </form>
+
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="editModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="editModalSave">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Hidden File Input -->
+    <input type="file" id="fileInput" accept=".json" class="sr-only">
+    
+    <!-- Scripts -->
+    <script src="fullpage.js"></script>
+</body>
+</html>

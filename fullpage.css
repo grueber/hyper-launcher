@@ -1,0 +1,1314 @@
+/* Fullpage CSS - Hyper Launcher v3.2 - Complete Layout System with Tile Math Responsive Breakpoints */
+
+/* Base layout reset */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 100%);
+    color: var(--text-primary);
+}
+
+/* Skip link accessibility */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 6px;
+    background: var(--primary);
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    z-index: 1000000;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 6px;
+}
+
+/* Main layout container */
+.layout {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Header - Fixed at top */
+.top-header {
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 64px;
+    backdrop-filter: blur(10px);
+    z-index: var(--z-sticky);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.header-left-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex: 1;
+    min-width: 0;
+}
+
+.header-center {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex: 2;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.header-right-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    flex: 1;
+    justify-content: flex-end;
+    min-width: 0;
+}
+
+/* Grid Layout Controls */
+.grid-layout-controls {
+    display: flex;
+    gap: var(--space-1);
+    background: var(--surface-elevated);
+    border-radius: var(--radius-md);
+    padding: var(--space-1);
+    border: 2px solid var(--border);
+}
+
+.grid-size-btn {
+    padding: var(--space-2);
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    min-width: 32px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grid-size-btn:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+}
+
+.grid-size-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+/* View Controls */
+.view-controls {
+    display: flex;
+    background: var(--surface-elevated);
+    border-radius: var(--radius-md);
+    padding: var(--space-1);
+    border: 2px solid var(--border);
+    gap: var(--space-1);
+}
+
+.view-btn {
+    padding: var(--space-2);
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+    font-size: var(--text-base);
+    min-width: 40px;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-1);
+}
+
+.view-btn:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+}
+
+.view-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.view-label {
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    display: none; /* Hide visible text, title attribute provides accessibility */
+}
+
+/* Sickbay Button with Badge */
+.sickbay-btn {
+    position: relative; /* Create positioning context for badge */
+}
+
+/* Sickbay button active state uses orange - more prominent than hover */
+.sickbay-btn.active {
+    background: rgba(224, 139, 53, 0.35) !important;
+    border-color: rgba(224, 139, 53, 0.7) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 0 0 3px rgba(224, 139, 53, 0.2) !important;
+}
+
+.sickbay-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: var(--warning);
+    color: white;
+    font-size: var(--text-xs);
+    font-weight: var(--font-bold);
+    padding: 2px 6px;
+    border-radius: var(--radius-full);
+    min-width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    box-shadow: var(--shadow-md);
+    border: 2px solid var(--surface);
+    z-index: 10;
+}
+
+/* FIXED: Clear Sickbay Button - Centered Floating Overlay */
+.clear-sickbay-btn {
+    display: none; /* Hidden by default */
+    position: fixed; /* Fixed positioning to stay centered in viewport */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for button's own dimensions */
+    z-index: 30; /* Appear above content but below modals (modal backdrop is 40) */
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-6); /* Larger padding for prominence */
+    background: rgba(244, 67, 54, 0.15); /* Red tint background */
+    border: 2px solid rgba(244, 67, 54, 0.3); /* Red border */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); /* Strong shadow for floating effect */
+    font-size: 1.1rem; /* Slightly larger text */
+    font-weight: 600; /* Bold text */
+    min-width: 220px; /* Ensure minimum width */
+    justify-content: center; /* Center content */
+    border-radius: var(--radius-lg);
+    transition: all var(--transition);
+}
+
+.clear-sickbay-btn.visible {
+    display: flex; /* Show when visible class is added */
+}
+
+.clear-sickbay-btn:hover {
+    background: rgba(244, 67, 54, 0.25); /* Stronger red on hover */
+    border-color: rgba(244, 67, 54, 0.5); /* Stronger border on hover */
+    transform: translate(-50%, -50%) scale(1.05); /* Slight scale up on hover */
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5); /* Stronger shadow on hover */
+}
+
+/* FIXED: Tab Mode Toggle Switch - Proper toggle UI */
+.tab-mode-toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    cursor: pointer;
+    user-select: none;
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+    transition: color var(--transition);
+}
+
+.tab-mode-toggle-switch:hover {
+    color: var(--text-primary);
+}
+
+/* Hide default checkbox */
+.toggle-checkbox {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Toggle slider track */
+.toggle-slider {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    background: var(--surface-elevated);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-full);
+    transition: all var(--transition);
+}
+
+/* Toggle slider thumb */
+.toggle-slider::before {
+    content: '';
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    left: 2px;
+    top: 2px;
+    background: var(--danger); /* Red for "active tabs" (off state) */
+    border-radius: var(--radius-full);
+    transition: all var(--transition);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Checked state - slider moves right, changes to green */
+.toggle-checkbox:checked + .toggle-slider::before {
+    transform: translateX(20px);
+    background: var(--primary); /* Green for "background tabs" (on state) */
+}
+
+/* Checked state - track background */
+.toggle-checkbox:checked + .toggle-slider {
+    background: rgba(76, 175, 80, 0.1); /* Green tint for on state */
+    border-color: var(--primary);
+}
+
+/* Focus state for accessibility */
+.toggle-checkbox:focus-visible + .toggle-slider {
+    outline: 3px solid var(--border-focus);
+    outline-offset: 2px;
+}
+
+/* Hover state */
+.tab-mode-toggle-switch:hover .toggle-slider {
+    border-color: var(--border-hover);
+}
+
+/* Label text */
+.toggle-label {
+    font-weight: var(--font-medium);
+}
+
+/* Dropdown Container */
+.dropdown-container {
+    position: relative;
+}
+
+.dropdown-content {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: var(--space-2);
+    background: var(--surface-elevated);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-2);
+    box-shadow: var(--shadow-lg);
+    z-index: var(--z-dropdown);
+    min-width: max-content;  /* FIXED: Auto-size based on content */
+    max-width: 25ch;  /* FIXED: Max 25 characters width */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all var(--transition);
+}
+
+.dropdown-content.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    width: 100%;
+    padding: var(--space-3);
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    font-family: inherit;
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+    text-align: left;
+    min-height: 40px;
+}
+
+.dropdown-item:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: var(--border);
+    margin: var(--space-2) 0;
+}
+
+/* Main Content Area - Fixed Search Footer Layout */
+.main-content {
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-area {
+    flex: 1;
+    overflow-y: auto; /* FIXED: Scroll entire content area */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Apps Container */
+.apps-container {
+    padding: var(--space-6);
+    flex: 1; /* Fill available space in parent flex container */
+    display: flex;  /* FIXED: Enable flex layout for empty state centering */
+    flex-direction: column;  /* Stack content vertically */
+}
+
+/* Apps Grid - Base styles (will be overridden by responsive breakpoints) */
+.apps-grid {
+    display: grid;
+    gap: 16px;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+/* FIXED: App Tiles - Square with proper text truncation */
+.app-tile {
+    position: relative;
+    background: var(--surface-elevated);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-3);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--transition);
+    aspect-ratio: 1; /* FIXED: Force square tiles */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-2);
+    user-select: none;
+    min-height: 0; /* FIXED: Allow shrinking */
+    overflow: visible; /* FIXED: Allow action buttons to extend beyond border */
+}
+
+.app-tile:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.app-tile:focus-visible {
+    outline: 3px solid var(--border-focus);
+    outline-offset: 2px;
+}
+
+/* FIXED: App Icons - Proper sizing */
+.app-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--border);
+    flex-shrink: 0;
+    transition: transform var(--transition);
+}
+
+.app-tile:hover .app-icon {
+    transform: scale(1.05);
+}
+
+.app-icon.has-favicon {
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+}
+
+/* FIXED: App Titles - Single line with proper truncation */
+.app-title {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+    font-weight: var(--font-semibold);
+    line-height: 1.2;
+    width: 100%; /* FIXED: Full width for proper truncation */
+    text-align: center;
+    white-space: nowrap; /* FIXED: Force single line */
+    overflow: hidden; /* FIXED: Hide overflow */
+    text-overflow: ellipsis; /* FIXED: Add ellipsis */
+    transition: color var(--transition);
+    margin: 0;
+    padding: 0 var(--space-1); /* FIXED: Add padding for better appearance */
+}
+
+.app-tile:hover .app-title {
+    color: var(--text-primary);
+}
+
+/* Action Buttons on Tiles */
+.edit-btn {
+    position: absolute;
+    top: -8px;
+    left: -8px;
+    width: 28px;
+    height: 28px;
+    background: var(--primary);
+    color: white;
+    border: 2px solid var(--surface);
+    border-radius: var(--radius-full);
+    font-size: 14px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition);
+    z-index: 10; /* Above tiles but below modals (modal backdrop is 40) */
+}
+
+.app-tile:hover .edit-btn {
+    display: flex;
+}
+
+.edit-btn:hover {
+    background: var(--primary-hover);
+    transform: scale(1.1);
+}
+
+.delete-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 28px;
+    height: 28px;
+    background: var(--danger);
+    color: white;
+    border: 2px solid var(--surface);
+    border-radius: var(--radius-full);
+    font-size: 14px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition);
+    z-index: 10; /* Above tiles but below modals (modal backdrop is 40) */
+}
+
+.app-tile:hover .delete-btn {
+    display: flex;
+}
+
+.delete-btn:hover {
+    background: var(--danger-hover);
+    transform: scale(1.1);
+}
+
+.move-to-main-btn {
+    position: absolute;
+    bottom: -8px;
+    right: -8px;
+    width: 28px;
+    height: 28px;
+    background: var(--warning);
+    color: white;
+    border: 2px solid var(--surface);
+    border-radius: var(--radius-full);
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition);
+    z-index: 10; /* Above tiles but below modals (modal backdrop is 40) */
+}
+
+.move-to-main-btn:hover {
+    background: var(--warning-hover);
+    transform: scale(1.1);
+}
+
+/* Thumbnail View - Base styles (will be overridden by responsive breakpoints) */
+.thumbnail-view .app-tile {
+    aspect-ratio: 1;  /* Force square tiles */
+    padding: var(--space-2);
+}
+
+.thumbnail-view .app-icon {
+    width: 60px;   /* Base size, scaled down at smaller viewports */
+    height: 60px;
+}
+
+.thumbnail-view .app-title {
+    display: none;  /* Hide titles in thumbnail view */
+}
+
+/* List View */
+.list-view .apps-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    max-width: 4000px; /* 100% wider than previous 2000px (5x wider than original 800px) */
+}
+
+.list-view .app-tile {
+    height: auto;
+    min-height: 60px;
+    padding: var(--space-3) var(--space-4);
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    gap: var(--space-3);
+    align-items: center;
+    aspect-ratio: auto; /* Override square aspect ratio for list view */
+}
+
+.list-view .app-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+}
+
+.list-view .app-title {
+    flex: 1;
+    text-align: left;
+    font-size: var(--text-base);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* FIXED: Search Area - Always visible fixed footer (Approach 1: Fixed Search Footer)
+   See commit history for dynamic positioning approach if needed later */
+.search-area {
+    padding: var(--space-6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    flex-shrink: 0; /* Never shrink, always visible */
+    position: relative; /* Changed from static to allow ::before positioning */
+    z-index: var(--z-sticky);
+}
+
+/* Gradient overlay extending above search area to show tiles behind */
+.search-area::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px; /* Extend 200px above the search area */
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.6));
+    pointer-events: none; /* Allow clicks to pass through to tiles */
+    z-index: -1; /* Behind the search-area-inner content */
+}
+
+/* Inner container with contained box styling */
+.search-area-inner {
+    max-width: 600px;
+    width: 100%;
+    background: linear-gradient(to bottom, rgba(42, 42, 42, 0.1), rgba(42, 42, 42, 0.9));  /* Very transparent at top to clearly show tiles behind */
+    backdrop-filter: blur(10px);  /* Glassmorphism effect */
+    border: 2px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-8);  /* Increased from var(--space-5) for more spacious feel */
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    box-shadow: var(--shadow-md);
+}
+
+/* FIXED: Bookmark All Tabs - Buttons on same line */
+.bookmark-all-tabs {
+    display: flex;
+    flex-direction: row;  /* Side-by-side buttons */
+    gap: var(--space-3);
+    width: 100%;
+}
+
+.bookmark-all-tabs .btn {
+    width: 100%; /* Full width buttons */
+    justify-content: center;
+}
+
+/* FIXED: Search Container - Clean styling */
+.search-container {
+    position: relative;
+    width: 100%;
+}
+
+.search-input {
+    width: 100%;
+    padding: var(--space-3) var(--space-12) var(--space-3) var(--space-3);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface-elevated);
+    color: var(--text-primary);
+    font-size: var(--text-base);
+    font-family: inherit;
+    transition: all var(--transition);
+    outline: none;
+    min-height: 48px;
+}
+
+.search-input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+.search-clear {
+    position: absolute;
+    right: var(--space-3);
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--surface-hover);
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    font-size: var(--text-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+}
+
+.search-clear:hover {
+    background: var(--danger);
+    color: white;
+}
+
+/* Empty States */
+.empty-state {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: var(--space-8);
+}
+
+.empty-state.visible {
+    display: flex;
+}
+
+.empty-state-content {
+    max-width: 400px;
+}
+
+.empty-state-icon {
+    font-size: 64px;
+    margin-bottom: var(--space-4);
+    opacity: 0.8;
+    animation: float 3s ease-in-out infinite;
+}
+
+.empty-state h2 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+}
+
+.empty-state p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-6);
+    line-height: 1.6;
+}
+
+.empty-state-actions {
+    display: flex;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+/* Footer */
+.footer {
+    background: var(--surface);
+    border-top: 2px solid var(--border);
+    padding: var(--space-3) var(--space-4);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 64px;
+    flex-shrink: 0;
+    gap: var(--space-4);
+}
+
+.footer-left {
+    flex: 1;
+    min-width: 0;
+}
+
+.footer-stats {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--text-xs);
+}
+
+.stat-label {
+    color: var(--text-tertiary);
+}
+
+.stat-value {
+    color: var(--text-primary);
+    font-weight: var(--font-semibold);
+}
+
+/* Badge treatment for sickbay stat when has items */
+.stat-value.has-sickbay {
+    background: var(--warning);
+    color: white;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    font-weight: var(--font-bold);
+}
+
+.footer-right {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
+}
+
+.footer-brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+}
+
+.brand-title {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin: 0;
+}
+
+.brand-badge {
+    background: var(--warning);
+    color: white;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    padding: 2px var(--space-2);
+    border-radius: var(--radius-sm);
+    line-height: 1;
+}
+
+/* Quick Add Popup */
+.quick-add-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    background: var(--surface-elevated);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: var(--space-6);
+    box-shadow: var(--shadow-xl);
+    z-index: var(--z-modal);
+    width: 90%;
+    max-width: 480px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-slow);
+}
+
+.quick-add-popup.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.quick-add-popup h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-4);
+    text-align: center;
+}
+
+.quick-add-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+}
+
+.quick-add-input {
+    width: 100%;
+    padding: var(--space-3);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    font-family: inherit;
+    transition: all var(--transition);
+    outline: none;
+}
+
+.quick-add-input:focus {
+    border-color: var(--border-focus);
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.2);
+}
+
+.quick-add-toggles {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: space-between;
+}
+
+.toggle-group {
+    display: flex;
+    gap: var(--space-1);
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: var(--space-1);
+    border: 2px solid var(--border);
+}
+
+.toggle-btn {
+    padding: var(--space-2) var(--space-3);
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+}
+
+.toggle-btn:hover {
+    background: var(--surface-hover);
+    color: var(--text-primary);
+}
+
+.toggle-btn.active {
+    background: var(--primary);
+    color: white;
+}
+
+.quick-add-actions {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: flex-end;
+    margin-top: var(--space-2);
+}
+
+.quick-add-btn {
+    padding: var(--space-2) var(--space-4);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.quick-add-btn:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-hover);
+}
+
+.quick-add-btn.primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.quick-add-btn.primary:hover {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+}
+
+/* Onboarding */
+.onboarding-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--surface-overlay);
+    backdrop-filter: blur(8px);
+    z-index: var(--z-modal-backdrop);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-slow);
+}
+
+.onboarding-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.onboarding-content {
+    background: var(--surface-elevated);
+    border: 2px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-xl);
+    width: 90%;
+    max-width: 480px;
+    padding: var(--space-6);
+    text-align: center;
+}
+
+.onboarding-step {
+    display: none;
+}
+
+.onboarding-step.active {
+    display: block;
+}
+
+.onboarding-icon {
+    font-size: 64px;
+    margin-bottom: var(--space-4);
+}
+
+.onboarding-content h2 {
+    font-size: var(--text-xl);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--space-2);
+}
+
+.onboarding-content p {
+    color: var(--text-secondary);
+    margin-bottom: var(--space-6);
+    line-height: 1.6;
+}
+
+.onboarding-actions {
+    display: flex;
+    gap: var(--space-2);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Scrollbar Styling */
+.apps-container::-webkit-scrollbar {
+    width: 12px;
+}
+
+.apps-container::-webkit-scrollbar-track {
+    background: var(--surface);
+    border-radius: var(--radius-sm);
+}
+
+.apps-container::-webkit-scrollbar-thumb {
+    background: var(--border-hover);
+    border-radius: var(--radius-sm);
+}
+
+.apps-container::-webkit-scrollbar-thumb:hover {
+    background: var(--text-tertiary);
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN - Tile Math Based Breakpoints (v3.2)
+   ============================================================================
+
+   IMPORTANT: Breakpoints are calculated based on exact tile dimensions to
+   prevent horizontal overflow at any viewport size.
+
+   Tile Math Formula:
+   Minimum Viewport Width = (columns × tile_width) + (gaps × gap_width) + (2 × padding)
+
+   Layout Calculations:
+   - Comfortable (11 cols): (11×120) + (10×16) + 48 = 1528px minimum
+   - Compact (9 cols):      (9×120)  + (8×16)  + 48 = 1256px minimum
+   - Roomy (22 cols):       (22×120) + (21×16) + 48 = 3024px minimum
+
+   Breakpoint Strategy:
+   1. Ultra-wide (≥3040px):   Roomy 22-column fixed grid
+   2. Large Desktop (≥1540px): Comfortable 11-column fixed grid (default)
+   3. Medium Desktop (1280-1539px): Compact 9-column fixed grid + flexible fallback
+   4. Tablet (768-1279px):    All layouts use flexible grids
+   5. Mobile (<768px):        Compact flexible grids
+
+   View Mode Coverage:
+   - Grid View: Fixed grids at desktop+, flexible grids at tablet/mobile
+   - Thumbnail View: Flexible auto-fill at all breakpoints
+   - List View: Single column (1fr) at all breakpoints
+
+   ============================================================================ */
+
+/* Large Desktop (1540px+) - Comfortable layout fits (11 cols = 1528px min) */
+@media (min-width: 1540px) {
+    /* Default and comfortable layout */
+    .apps-grid,
+    .apps-grid.comfortable {
+        grid-template-columns: repeat(11, 120px);
+        max-width: 1480px;  /* 11×120 + 10×16 gap */
+    }
+
+    .apps-grid.compact {
+        grid-template-columns: repeat(9, 120px);
+        max-width: 1208px;  /* 9×120 + 8×16 gap */
+    }
+
+    /* Thumbnail view at large desktop */
+    .thumbnail-view .apps-grid {
+        grid-template-columns: repeat(auto-fill, 80px);
+        gap: 12px;
+    }
+}
+
+/* Ultra-wide (3040px+) - Roomy layout fits (22 cols = 3024px min) */
+@media (min-width: 3040px) {
+    .apps-grid.roomy {
+        grid-template-columns: repeat(22, 120px);
+        max-width: 2976px;  /* 22×120 + 21×16 gap */
+    }
+}
+
+/* Medium Desktop (1280-1539px) - Only compact layout fits (9 cols = 1256px min) */
+@media (min-width: 1280px) and (max-width: 1539px) {
+    /* Default, comfortable, and roomy layouts use flexible grid */
+    .apps-grid,
+    .apps-grid.comfortable,
+    .apps-grid.roomy {
+        /* Force flexible grid - viewport too small for comfortable/roomy */
+        grid-template-columns: repeat(auto-fill, minmax(100px, 120px)) !important;
+        max-width: 100%;
+        gap: 14px;
+    }
+
+    /* Compact layout uses fixed grid */
+    .apps-grid.compact {
+        grid-template-columns: repeat(9, 120px);
+        max-width: 1208px;
+        gap: 16px;  /* Use full desktop gap for fixed grid */
+    }
+
+    /* Thumbnail view at medium desktop */
+    .thumbnail-view .apps-grid {
+        grid-template-columns: repeat(auto-fill, minmax(75px, 85px));
+        gap: 12px;
+    }
+}
+
+/* Tablet (768-1279px) - Flexible tiles for all layouts */
+@media (max-width: 1279px) {
+    .header-center {
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    /* Grid View: Constrained flex 100-120px to maintain near-consistency */
+    .apps-grid,
+    .apps-grid.compact,
+    .apps-grid.comfortable,
+    .apps-grid.roomy {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 120px)) !important;
+        max-width: 100%;
+        gap: 14px;  /* Slightly reduced gap */
+    }
+
+    /* FIXED: List View - Preserve single column at all breakpoints */
+    .list-view .apps-grid {
+        grid-template-columns: 1fr !important;  /* Override grid layout classes */
+        max-width: 100%;
+        gap: 8px;
+    }
+
+    .app-tile {
+        padding: 10px;  /* Slightly reduced padding */
+    }
+
+    /* Thumbnail View: Constrained flex 75-85px */
+    .thumbnail-view .apps-grid {
+        grid-template-columns: repeat(auto-fill, minmax(75px, 85px));
+        gap: 12px;  /* FIXED: Standardized to match desktop (was 10px) */
+    }
+
+    .thumbnail-view .app-tile {
+        width: auto;   /* Let grid control width */
+        height: auto;  /* aspect-ratio: 1 maintains square */
+    }
+
+    .thumbnail-view .app-icon {
+        width: 57px;   /* FIXED: Increased 50% from 38px (scaled proportionally) */
+        height: 57px;
+    }
+}
+
+/* Mobile (<768px) - Compact Flexible Tiles */
+@media (max-width: 767px) {
+    .top-header {
+        flex-direction: column;
+        gap: var(--space-2);
+        padding: var(--space-2);
+    }
+
+    .header-left-actions,
+    .header-center,
+    .header-right-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .apps-container {
+        padding: var(--space-4);
+    }
+
+    /* Grid View: Compact flex 90-110px for mobile */
+    .apps-grid,
+    .apps-grid.compact,
+    .apps-grid.comfortable,
+    .apps-grid.roomy {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 110px));
+        gap: 12px;
+    }
+
+    /* FIXED: List View - Preserve single column at all breakpoints */
+    .list-view .apps-grid {
+        grid-template-columns: 1fr !important;  /* Override grid layout classes */
+        max-width: 100%;
+        gap: 8px;
+    }
+
+    .app-tile {
+        padding: var(--space-2);  /* 8px padding for compact mobile */
+        height: auto;  /* Let aspect-ratio control height */
+    }
+
+    .app-icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    /* Thumbnail View: Compact flex 70-80px for mobile */
+    .thumbnail-view .apps-grid {
+        grid-template-columns: repeat(auto-fill, minmax(70px, 80px));
+        gap: 12px;  /* FIXED: Standardized to match desktop (was 8px) */
+    }
+
+    .thumbnail-view .app-icon {
+        width: 54px;   /* FIXED: Increased 50% from 36px for better visibility */
+        height: 54px;
+    }
+
+    /* List View: Slightly smaller icon on mobile */
+    .list-view .app-icon {
+        width: 28px;
+        height: 28px;
+    }
+
+    .footer {
+        flex-direction: column;
+        gap: var(--space-2);
+        text-align: center;
+    }
+
+    .footer-stats {
+        justify-content: center;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .app-tile {
+        border-width: 3px;
+    }
+    
+    .btn {
+        border-width: 3px;
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .app-tile:hover {
+        transform: none;
+    }
+    
+    .delete-btn:hover,
+    .move-to-main-btn:hover {
+        transform: none;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .top-header,
+    .search-area,
+    .footer,
+    .modal-overlay,
+    .onboarding-overlay,
+    .quick-add-popup {
+        display: none !important;
+    }
+    
+    .main-content {
+        height: auto;
+        overflow: visible;
+    }
+    
+    .apps-container {
+        overflow: visible;
+        height: auto;
+    }
+}

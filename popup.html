@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper Launcher</title>
+    <link rel="stylesheet" href="design-system.css">
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- Onboarding Overlay -->
+    <div class="onboarding-overlay" id="onboardingOverlay">
+        <div class="onboarding-content">
+            <div class="onboarding-step active" data-step="1">
+                <div class="onboarding-icon">🚀</div>
+                <h2>Welcome to Hyper Launcher!</h2>
+                <p>Your ADHD-friendly bookmark manager. Let's add your first bookmark to get started.</p>
+                <div class="onboarding-actions">
+                    <button class="btn btn-primary" id="onboardingNext">Add Current Page</button>
+                    <button class="btn btn-ghost" id="onboardingSkip">Skip Tour</button>
+                </div>
+            </div>
+            
+            <div class="onboarding-step" data-step="2">
+                <div class="onboarding-icon">🏥</div>
+                <h2>Meet the Sickbay</h2>
+                <p>A temporary storage for bookmarks you might need later. Perfect for research tabs!</p>
+                <div class="onboarding-actions">
+                    <button class="btn btn-primary" id="onboardingToFullPage">Open Full Page</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compact View Container -->
+    <div class="compact-container" id="compactContainer">
+        <div class="compact-actions">
+            <!-- Single Bookmark Button -->
+            <button class="btn btn-block btn-large" id="compactBookmarkBtn" title="Bookmark this page">
+                <span>🔖 Bookmark This Page</span>
+            </button>
+
+            <!-- Destination Toggle Group -->
+            <div class="destination-toggle-group">
+                <div class="toggle-buttons">
+                    <button class="toggle-btn active" id="compactDestMain" data-destination="main">
+                        <span>Main</span>
+                    </button>
+                    <button class="toggle-btn" id="compactDestSickbay" data-destination="sickbay">
+                        <span>🏥 Sickbay</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="compact-divider"></div>
+
+            <!-- View All Button -->
+            <button class="btn btn-block btn-large" id="compactViewAllBtn" title="Open full page view">
+                <span>📋 View All Bookmarks</span>
+            </button>
+        </div>
+
+        <!-- Compact Footer -->
+        <footer class="compact-footer">
+            <!-- Left: Branding -->
+            <div class="header-brand">
+                <h1 class="header-title">Hyper Launcher</h1>
+                <span class="header-badge" id="versionBadge">v3.2</span>
+            </div>
+
+            <!-- Right: Stats and Settings -->
+            <div class="compact-footer-right">
+                <div class="compact-stats">
+                    <span class="stat-count" id="compactSavedToday">0 saved today</span>
+                </div>
+
+                <div class="compact-settings-container">
+                    <button class="compact-settings-icon"
+                            id="compactSettingsBtn"
+                            aria-haspopup="true"
+                            aria-expanded="false"
+                            title="Settings">
+                        <span aria-hidden="true">⚙️</span>
+                    </button>
+
+                    <div class="dropdown-content compact-settings-dropdown" role="menu" id="compactSettingsMenu">
+                        <!-- Compact Mode Toggle -->
+                        <div class="dropdown-item-toggle" role="menuitem">
+                            <span>Compact Mode</span>
+                            <label class="toggle-switch-small">
+                                <input type="checkbox" id="compactModeToggle" checked>
+                                <span class="toggle-slider-small"></span>
+                            </label>
+                        </div>
+
+                        <!-- Background Tabs Toggle -->
+                        <div class="dropdown-item-toggle" role="menuitem">
+                            <span>Background Tabs</span>
+                            <label class="toggle-switch-small">
+                                <input type="checkbox" id="compactTabModeToggle" checked>
+                                <span class="toggle-slider-small"></span>
+                            </label>
+                        </div>
+
+                        <div class="dropdown-divider"></div>
+
+                        <button class="dropdown-item" role="menuitem" id="compactExportBtn">
+                            <span aria-hidden="true">📤</span>
+                            <span>Export Data</span>
+                        </button>
+                        <button class="dropdown-item" role="menuitem" id="compactImportBtn">
+                            <span aria-hidden="true">📥</span>
+                            <span>Import Data</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div class="container" id="fullContainer">
+        <!-- Enhanced Top Actions Bar -->
+        <div class="top-actions-bar" id="topActionsBar">
+            <div class="primary-actions">
+                <button class="btn btn-primary" id="addMainBtn" title="Add current page to main launcher">
+                    <span>⭐ Main</span>
+                </button>
+
+                <button class="btn btn-warning" id="addSickbayBtn" title="Add current page to Sickbay">
+                    <span>⭐ Sickbay</span>
+                </button>
+                
+                <div class="sickbay-container">
+                    <button class="btn" id="sickbayBtn" title="View Sickbay storage">
+                        <span>🏥</span>
+                        <span>Sickbay</span>
+                        <span class="sickbay-count" id="sickbayCount">0</span>
+                    </button>
+                </div>
+                
+                <button class="btn btn-warning" id="fullPageBtn" title="Open full page view">
+                    <span>Full Page</span>
+                </button>
+            </div>
+            
+            <div class="secondary-actions">
+                <button class="btn btn-icon" id="searchToggleBtn" title="Search bookmarks">
+                    <span aria-hidden="true">🔍</span>
+                    <span class="sr-only">Search bookmarks</span>
+                </button>
+                
+                <!-- More Menu -->
+                <div class="dropdown" id="moreDropdown">
+                    <button class="btn btn-icon" 
+                            id="moreBtn" 
+                            aria-haspopup="true" 
+                            aria-expanded="false"
+                            title="More options">
+                        <span aria-hidden="true">⋯</span>
+                        <span class="sr-only">More options</span>
+                    </button>
+                    
+                    <div class="dropdown-content" role="menu" id="moreMenu">
+                        <!-- Compact Mode Toggle -->
+                        <div class="dropdown-item-toggle" role="menuitem">
+                            <span>Compact Mode</span>
+                            <label class="toggle-switch-small">
+                                <input type="checkbox" id="fullCompactModeToggle" checked>
+                                <span class="toggle-slider-small"></span>
+                            </label>
+                        </div>
+
+                        <!-- Background Tabs Toggle -->
+                        <div class="dropdown-item-toggle" role="menuitem">
+                            <span>Background Tabs</span>
+                            <label class="toggle-switch-small">
+                                <input type="checkbox" id="fullTabModeToggle" checked>
+                                <span class="toggle-slider-small"></span>
+                            </label>
+                        </div>
+
+                        <div class="dropdown-divider"></div>
+
+                        <button class="dropdown-item" role="menuitem" id="addCustomBtn">
+                            <span aria-hidden="true">➕</span>
+                            <span>Add Custom URL</span>
+                        </button>
+
+                        <!-- FIXED: Undo button -->
+                        <button class="dropdown-item" role="menuitem" id="undoBtn">
+                            <span aria-hidden="true">↺</span>
+                            <span>Undo</span>
+                        </button>
+
+                        <div class="dropdown-divider"></div>
+
+                        <button class="dropdown-item" role="menuitem" id="exportBtn">
+                            <span aria-hidden="true">📤</span>
+                            <span>Export Data</span>
+                        </button>
+                        <button class="dropdown-item" role="menuitem" id="importBtn">
+                            <span aria-hidden="true">📥</span>
+                            <span>Import Data</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Enhanced Search Bar (Hidden by default) -->
+        <div class="search-bar" id="searchBar" style="display: none;">
+            <div class="search-input-container">
+                <input type="search" 
+                       class="search-input" 
+                       id="searchInput"
+                       placeholder="Search bookmarks..."
+                       aria-label="Search bookmarks">
+                <button class="search-clear-btn" id="searchClearBtn" title="Clear search">×</button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main id="main-content" class="main-content">
+            <div class="apps-container" id="appsContainer" role="tabpanel" aria-labelledby="gridViewBtn">
+                <div class="apps-grid" id="appsGrid" role="grid" aria-label="Bookmarks">
+                    <!-- Apps will be dynamically added here -->
+                </div>
+                
+                <!-- Canvas View - Coming Soon (matching fullpage) -->
+                <div class="apps-canvas" id="appsCanvas" role="grid" aria-label="Bookmarks canvas">
+                    <div class="canvas-coming-soon">
+                        <div class="coming-soon-icon">🎨</div>
+                        <h3 class="coming-soon-title">Canvas View</h3>
+                        <p class="coming-soon-subtitle">Coming Soon!</p>
+                        <p class="coming-soon-description">
+                            The Canvas view will let you freely position and organize your bookmarks 
+                            in a visual workspace.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Empty State -->
+                <div class="empty-state" id="emptyState">
+                    <div class="empty-state-icon">📚</div>
+                    <h3>No bookmarks yet</h3>
+                    <p>Add your first bookmark by clicking "⭐ Main" above</p>
+                    <div class="empty-state-actions">
+                        <button class="btn btn-primary" id="emptyStateAddBtn">
+                            <span>Add Current Page</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Enhanced Sickbay Empty State -->
+                <div class="empty-state" id="sickbayEmptyState">
+                    <div class="empty-state-icon">🏥</div>
+                    <h3>Sickbay is empty</h3>
+                    <p>Add temporary bookmarks here for later sorting</p>
+                    <div class="empty-state-actions">
+                        <button class="btn btn-warning" id="addToSickbayEmptyBtn">Add to Sickbay</button>
+                        <button class="btn btn-ghost" id="backToMainBtn">Back to Main</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Enhanced Footer -->
+        <footer class="footer">
+            <!-- Header Info (moved to footer) -->
+            <div class="header-info">
+                <div class="header-brand">
+                    <h1 class="header-title">Hyper Launcher</h1>
+                    <span class="header-badge" id="versionBadge">v3.2</span>
+                </div>
+            </div>
+            
+            <!-- Enhanced View Controls -->
+            <div class="view-controls" role="tablist" aria-label="View modes">
+                <button class="view-btn active"
+                        id="gridViewBtn"
+                        role="tab"
+                        aria-selected="true"
+                        aria-controls="appsGrid"
+                        title="Grid View">
+                    <span aria-hidden="true">⊞</span>
+                    <span class="sr-only">Grid View</span>
+                </button>
+                <button class="view-btn"
+                        id="thumbnailViewBtn"
+                        role="tab"
+                        aria-selected="false"
+                        title="Thumbnail View">
+                    <span aria-hidden="true">⊟</span>
+                    <span class="sr-only">Thumbnail View</span>
+                </button>
+                <button class="view-btn"
+                        id="listViewBtn"
+                        role="tab"
+                        aria-selected="false"
+                        title="List View">
+                    <span aria-hidden="true">☰</span>
+                    <span class="sr-only">List View</span>
+                </button>
+            </div>
+            
+            <!-- Enhanced Status Indicator -->
+            <div class="status-indicator" id="statusIndicator" title="Click to toggle background tabs">
+                <span class="status-dot" id="statusDot"></span>
+                <span class="status-text" id="statusText">background tabs</span>
+            </div>
+        </footer>
+
+        <!-- Enhanced Add Dialog -->
+        <div class="modal-overlay" id="addModalOverlay">
+            <div class="modal" role="dialog" aria-labelledby="addModalTitle" aria-modal="true">
+                <div class="modal-header">
+                    <h2 id="addModalTitle">Add New Bookmark</h2>
+                    <button class="btn btn-icon btn-ghost" id="addModalClose" aria-label="Close dialog">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                
+                <form class="modal-body" id="addForm">
+                    <div class="form-group">
+                        <label for="urlInput" class="form-label">URL</label>
+                        <input type="url" 
+                               id="urlInput" 
+                               class="input" 
+                               placeholder="example.com or https://example.com" 
+                               required
+                               aria-describedby="urlHelp">
+                        <div id="urlHelp" class="form-help">Enter the website URL you want to bookmark</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="titleInput" class="form-label">Title (Optional)</label>
+                        <div class="input-with-clear">
+                            <input type="text" 
+                                   id="titleInput" 
+                                   class="input" 
+                                   placeholder="My Bookmark"
+                                   aria-describedby="titleHelp">
+                            <button type="button" class="input-clear-btn" id="titleClearBtn" style="display: none;">×</button>
+                        </div>
+                        <div id="titleHelp" class="form-help">Leave empty to auto-generate from website</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Add to</label>
+                        <div class="radio-group">
+                            <label class="radio-option">
+                                <input type="radio" name="destination" value="main" checked>
+                                <span class="radio-label">Main Launcher</span>
+                            </label>
+                            <label class="radio-option">
+                                <input type="radio" name="destination" value="sickbay">
+                                <span class="radio-label">Sickbay</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" id="addModalCancel">Cancel</button>
+                    <button class="btn btn-primary" id="addModalSubmit" type="submit" form="addForm">
+                        <span>Add Bookmark</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Delete Confirmation -->
+        <div class="modal-overlay" id="deleteModalOverlay">
+            <div class="modal modal-sm" role="dialog" aria-labelledby="deleteModalTitle" aria-modal="true">
+                <div class="modal-header">
+                    <h2 id="deleteModalTitle">Delete Bookmark?</h2>
+                </div>
+
+                <div class="modal-body">
+                    <p>Are you sure you want to delete "<span id="deleteBookmarkName"></span>"?</p>
+                    <p class="text-tertiary text-sm">This action cannot be undone.</p>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" id="deleteModalCancel">Cancel</button>
+                    <button class="btn btn-danger" id="deleteModalConfirm">Delete</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Validation Error Modal -->
+        <div class="modal-overlay" id="importValidationModalOverlay">
+            <div class="modal modal-lg" role="dialog" aria-labelledby="importValidationModalTitle" aria-modal="true">
+                <div class="modal-header">
+                    <h2 id="importValidationModalTitle">Import Validation Errors</h2>
+                </div>
+
+                <div class="modal-body">
+                    <p class="text-warning">The following bookmarks have validation errors:</p>
+                    <div id="validationErrorsList" class="validation-errors-list"></div>
+
+                    <div class="validation-help">
+                        <h3>How to Fix:</h3>
+                        <ol>
+                            <li>Click "Cancel" to stop the import</li>
+                            <li>Open the JSON file in a text editor</li>
+                            <li>Fix the issues described above or remove the invalid bookmarks</li>
+                            <li>Save the file and try importing again</li>
+                        </ol>
+                        <p><strong>Or:</strong> Click "Skip Invalid Bookmarks" to import only the valid bookmarks.</p>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" id="importValidationModalCancel">Cancel</button>
+                    <button class="btn btn-warning" id="importValidationModalSkip">Skip Invalid Bookmarks</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Mode Selection Modal -->
+        <div class="modal-overlay" id="importModeModalOverlay">
+            <div class="modal modal-sm" role="dialog" aria-labelledby="importModeModalTitle" aria-modal="true">
+                <div class="modal-header">
+                    <h2 id="importModeModalTitle">Import Bookmarks</h2>
+                </div>
+
+                <div class="modal-body">
+                    <p>How would you like to import these bookmarks?</p>
+                    <div style="margin-top: var(--space-4);">
+                        <p><strong>Replace All:</strong> Remove all existing bookmarks and replace with imported data.</p>
+                        <p style="margin-top: var(--space-2);"><strong>Merge:</strong> Keep existing bookmarks and add only new ones (skip duplicates).</p>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" id="importModeCancel">Cancel</button>
+                    <button class="btn btn-danger" id="importModeReplace">Replace All</button>
+                    <button class="btn btn-primary" id="importModeMerge">Merge</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Bookmark Modal -->
+        <div class="modal-overlay" id="editModalOverlay">
+            <div class="modal" role="dialog" aria-labelledby="editModalTitle" aria-modal="true">
+                <div class="modal-header">
+                    <h2 id="editModalTitle">Edit Bookmark</h2>
+                </div>
+
+                <form class="modal-body" id="editForm">
+                    <div class="form-group">
+                        <label for="editUrl">URL</label>
+                        <input type="text" id="editUrl" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editTitle">Title</label>
+                        <input type="text" id="editTitle" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editFavicon">Favicon URL (optional)</label>
+                        <input type="text" id="editFavicon" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="editPreserveOriginal">
+                            <span>Preserve original favicon (don't auto-refresh)</span>
+                        </label>
+                    </div>
+                </form>
+
+                <div class="modal-footer">
+                    <button class="btn btn-ghost" id="editModalCancel">Cancel</button>
+                    <button class="btn btn-primary" id="editModalSave">Save Changes</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Enhanced Drag Drop Zone -->
+        <div class="drop-zone" id="dropZone">
+            <div class="drop-zone-content">
+                <div class="drop-zone-icon">📎</div>
+                <div class="drop-zone-text">Drop URL here to add bookmark</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+    
+    <!-- Hidden File Input -->
+    <input type="file" id="fileInput" accept=".json" class="sr-only">
+    
+    <!-- Scripts -->
+    <script src="popup.js"></script>
+</body>
+</html>

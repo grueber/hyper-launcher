@@ -1,0 +1,3083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper Launcher Design System v3.1 - Atomic Design</title>
+    <link rel="stylesheet" href="../design-system.css">
+    <link rel="stylesheet" href="../design-system-components.css">
+    <style>
+        /* Design System Page Specific Styles */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 100%);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        /* Container */
+        .ds-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: var(--space-6);
+        }
+
+        /* Header */
+        .ds-header {
+            text-align: center;
+            padding: var(--space-12) 0;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: var(--space-8);
+        }
+
+        .ds-header h1 {
+            font-size: 48px;
+            font-weight: var(--font-bold);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--space-3);
+        }
+
+        .ds-version {
+            background: var(--warning);
+            color: white;
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            display: inline-block;
+        }
+
+        .ds-subtitle {
+            font-size: var(--text-lg);
+            color: var(--text-secondary);
+            margin-top: var(--space-4);
+        }
+
+        .ds-description {
+            font-size: var(--text-base);
+            color: var(--text-tertiary);
+            margin-top: var(--space-2);
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Navigation */
+        .ds-nav {
+            position: sticky;
+            top: 0;
+            background: var(--surface-overlay);
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--border);
+            padding: var(--space-4);
+            z-index: var(--z-sticky);
+            margin-bottom: var(--space-8);
+        }
+
+        .ds-nav-list {
+            display: flex;
+            gap: var(--space-3);
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .ds-nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: var(--space-2) var(--space-3);
+            border-radius: var(--radius-md);
+            transition: all var(--transition);
+            font-weight: var(--font-medium);
+            font-size: var(--text-sm);
+            border: 2px solid transparent;
+        }
+
+        .ds-nav-link:hover {
+            color: var(--text-primary);
+            background: var(--surface-hover);
+            border-color: var(--border);
+        }
+
+        .ds-nav-link.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Level indicators */
+        .ds-level-badge {
+            font-size: var(--text-xs);
+            padding: 2px var(--space-2);
+            border-radius: var(--radius-sm);
+            margin-left: var(--space-1);
+            font-weight: var(--font-semibold);
+        }
+
+        .ds-level-tokens { background: var(--surface-active); color: var(--text-tertiary); }
+        .ds-level-atoms { background: rgba(76, 175, 80, 0.2); color: var(--primary); }
+        .ds-level-molecules { background: rgba(33, 150, 243, 0.2); color: var(--secondary); }
+        .ds-level-organisms { background: rgba(255, 152, 0, 0.2); color: var(--warning); }
+        .ds-level-templates { background: rgba(244, 67, 54, 0.2); color: var(--danger); }
+
+        /* Section */
+        .ds-section {
+            margin-bottom: var(--space-12);
+            scroll-margin-top: 100px;
+        }
+
+        .ds-section-title {
+            font-size: 36px;
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .ds-section-description {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-6);
+            font-size: var(--text-base);
+            padding-bottom: var(--space-4);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .ds-subsection {
+            margin-bottom: var(--space-8);
+        }
+
+        .ds-subsection-title {
+            font-size: 24px;
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--space-4);
+        }
+
+        .ds-description-text {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-4);
+            font-size: var(--text-sm);
+        }
+
+        /* Component Card */
+        .ds-card {
+            background: var(--surface-elevated);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-xl);
+            padding: var(--space-6);
+            margin-bottom: var(--space-6);
+        }
+
+        .ds-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+            flex-wrap: wrap;
+            gap: var(--space-2);
+        }
+
+        .ds-card-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .ds-usage-note {
+            font-size: var(--text-xs);
+            color: var(--text-tertiary);
+            font-style: italic;
+            margin-top: var(--space-2);
+        }
+
+        .ds-copy-btn {
+            padding: var(--space-2) var(--space-3);
+            background: var(--surface-hover);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: var(--text-xs);
+            font-weight: var(--font-medium);
+            transition: all var(--transition);
+        }
+
+        .ds-copy-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .ds-copy-btn.copied {
+            background: var(--success);
+            color: white;
+            border-color: var(--success);
+        }
+
+        /* Preview Area */
+        .ds-preview {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            margin-bottom: var(--space-4);
+            min-height: 60px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            align-items: center;
+        }
+
+        .ds-preview.column {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .ds-preview.center {
+            justify-content: center;
+        }
+
+        .ds-preview.dark {
+            background: #0a0a0a;
+        }
+
+        .ds-preview.full-width {
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Code Block */
+        .ds-code {
+            background: #0a0a0a;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--space-4);
+            overflow-x: auto;
+            position: relative;
+        }
+
+        .ds-code pre {
+            margin: 0;
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: var(--text-sm);
+            color: #e0e0e0;
+            line-height: 1.5;
+        }
+
+        .ds-code-lang {
+            position: absolute;
+            top: var(--space-2);
+            right: var(--space-2);
+            font-size: var(--text-xs);
+            color: var(--text-tertiary);
+            font-weight: var(--font-semibold);
+        }
+
+        /* Color Swatch */
+        .ds-color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .ds-color-swatch {
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            background: var(--surface);
+        }
+
+        .ds-color-preview {
+            height: 100px;
+            width: 100%;
+        }
+
+        .ds-color-info {
+            padding: var(--space-3);
+        }
+
+        .ds-color-name {
+            font-weight: var(--font-semibold);
+            color: var(--text-primary);
+            margin-bottom: var(--space-1);
+            font-size: var(--text-sm);
+        }
+
+        .ds-color-value {
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: var(--text-xs);
+            color: var(--text-tertiary);
+        }
+
+        /* Typography Scale */
+        .ds-type-scale {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .ds-type-example {
+            padding: var(--space-4);
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+        }
+
+        .ds-type-label {
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: var(--text-xs);
+            color: var(--text-tertiary);
+            min-width: 140px;
+            flex-shrink: 0;
+        }
+
+        /* Spacing Scale */
+        .ds-spacing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .ds-spacing-box {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: var(--space-3);
+            text-align: center;
+        }
+
+        .ds-spacing-visual {
+            background: var(--primary);
+            margin: var(--space-2) auto;
+            border-radius: var(--radius-sm);
+        }
+
+        .ds-spacing-label {
+            font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+            font-size: var(--text-sm);
+            color: var(--text-primary);
+            font-weight: var(--font-semibold);
+        }
+
+        .ds-spacing-value {
+            font-size: var(--text-xs);
+            color: var(--text-tertiary);
+        }
+
+        /* Shadow Examples */
+        .ds-shadow-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .ds-shadow-box {
+            background: var(--surface-elevated);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Radius Examples */
+        .ds-radius-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-4);
+        }
+
+        .ds-radius-box {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: var(--space-3);
+            text-align: center;
+        }
+
+        .ds-radius-visual {
+            background: var(--primary);
+            height: 80px;
+            margin: var(--space-2) 0;
+        }
+
+        /* State indicators */
+        .ds-state-label {
+            font-size: var(--text-xs);
+            color: var(--text-tertiary);
+            font-weight: var(--font-medium);
+            margin-bottom: var(--space-2);
+            display: block;
+        }
+
+        /* App Tile Demo Grid */
+        .ds-tile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: var(--space-4);
+        }
+
+        /* Layout previews */
+        .ds-layout-preview {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: var(--space-2);
+            margin-bottom: var(--space-4);
+        }
+
+        /* Footer */
+        .ds-footer {
+            text-align: center;
+            padding: var(--space-12) 0;
+            border-top: 2px solid var(--border);
+            margin-top: var(--space-12);
+            color: var(--text-tertiary);
+        }
+
+        .ds-footer-title {
+            font-size: var(--text-lg);
+            font-weight: var(--font-semibold);
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--space-2);
+        }
+
+        /* Utility grids */
+        .ds-grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-4);
+        }
+
+        .ds-grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-4);
+        }
+
+        .ds-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-4);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .ds-grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ds-grid-2,
+            .ds-grid-3,
+            .ds-grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .ds-nav-list {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .ds-section-title {
+                font-size: 28px;
+            }
+
+            .ds-type-example {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        /* ======================================
+           View-Specific Styles (from fullpage.css)
+           ====================================== */
+
+        /* Thumbnail View */
+        .thumbnail-view .apps-grid {
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 12px;
+        }
+
+        .thumbnail-view .app-tile {
+            height: 80px;
+            padding: var(--space-2);
+        }
+
+        .thumbnail-view .app-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .thumbnail-view .app-title {
+            display: none; /* Titles hidden, shown only in tooltip */
+        }
+
+        /* List View */
+        .list-view .apps-grid {
+            grid-template-columns: 1fr;
+            gap: 8px;
+            max-width: 2000px;
+        }
+
+        .list-view .app-tile {
+            height: auto;
+            min-height: 60px;
+            padding: var(--space-3) var(--space-4);
+            flex-direction: row; /* Horizontal layout */
+            justify-content: flex-start;
+            text-align: left;
+            gap: var(--space-3);
+            align-items: center;
+            aspect-ratio: auto; /* Override square aspect ratio */
+        }
+
+        .list-view .app-icon {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .list-view .app-title {
+            flex: 1;
+            text-align: left;
+            font-size: var(--text-base);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* List view action buttons */
+        .list-view .delete-btn {
+            margin-left: auto;
+        }
+
+        /* ======================================
+           Header/Footer Layout Styles (from fullpage.css and popup.css)
+           ====================================== */
+
+        /* Fullpage Header */
+        .top-header {
+            background: var(--surface);
+            border-bottom: 2px solid var(--border);
+            padding: var(--space-3) var(--space-4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 64px;
+            backdrop-filter: blur(10px);
+            z-index: var(--z-sticky);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .header-left-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            flex: 1;
+            min-width: 0;
+        }
+
+        .header-center {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            flex: 2;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .header-right-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            flex: 1;
+            justify-content: flex-end;
+            min-width: 0;
+        }
+
+        .grid-layout-controls {
+            display: flex;
+            gap: var(--space-1);
+            background: var(--surface-elevated);
+            border-radius: var(--radius-md);
+            padding: var(--space-1);
+        }
+
+        /* Popup Header */
+        .top-actions-bar {
+            background: var(--surface);
+            border-bottom: 2px solid var(--border);
+            padding: var(--space-3) var(--space-4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 64px;
+            backdrop-filter: blur(10px);
+        }
+
+        .primary-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            flex: 1;
+        }
+
+        .secondary-actions {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--surface);
+            border-top: 2px solid var(--border);
+            padding: var(--space-3) var(--space-4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 64px;
+            flex-shrink: 0;
+            gap: var(--space-4);
+        }
+
+        .footer-left {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .footer-stats {
+            display: flex;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            font-size: var(--text-xs);
+        }
+
+        .stat-label {
+            color: var(--text-tertiary);
+        }
+
+        .stat-value {
+            color: var(--text-primary);
+            font-weight: var(--font-semibold);
+        }
+
+        .stat-value.has-sickbay {
+            background: var(--warning);
+            color: white;
+            padding: 2px 8px;
+            border-radius: var(--radius-full);
+            font-weight: var(--font-bold);
+        }
+
+        .footer-right {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            min-width: 0;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .brand-title {
+            font-size: var(--text-base);
+            font-weight: var(--font-semibold);
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .brand-badge {
+            background: var(--warning);
+            color: white;
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            padding: 2px var(--space-2);
+            border-radius: var(--radius-sm);
+            line-height: 1;
+        }
+
+        /* Popup Footer/Header Elements */
+        .header-info {
+            flex-shrink: 0;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .header-title {
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 0;
+        }
+
+        .header-badge {
+            background: var(--warning);
+            color: white;
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            padding: 2px var(--space-2);
+            border-radius: var(--radius-sm);
+            line-height: 1;
+        }
+
+        /* ======================================
+           Responsive Multi-Column Layout (Newspaper Style)
+           Better horizontal space usage with natural content flow
+           ====================================== */
+
+        /* Single column layout - for Design Tokens section */
+        .ds-subsections-single {
+            column-count: 1; /* Always single column regardless of viewport */
+        }
+
+        .ds-subsections-single .ds-subsection {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            margin-bottom: var(--space-6); /* 24px spacing between stacked subsections */
+        }
+
+        /* Two column layout - for Templates layout patterns */
+        .ds-subsections-2col {
+            column-count: 1;
+            column-gap: var(--space-6); /* 24px */
+        }
+
+        .ds-subsections-2col .ds-subsection {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            margin-bottom: var(--space-4);
+        }
+
+        /* 2 columns at 1024px+ */
+        @media (min-width: 1024px) {
+            .ds-subsections-2col {
+                column-count: 2;
+            }
+        }
+
+        /* Multi-column layout - for Atoms, Molecules, Organisms sections */
+        .ds-subsections-grid {
+            column-count: 1;
+            column-gap: var(--space-6); /* 24px - provides comfortable spacing */
+        }
+
+        /* Prevent cards from splitting across columns */
+        .ds-subsections-grid .ds-subsection {
+            break-inside: avoid; /* Keep each subsection intact within a column */
+            page-break-inside: avoid; /* For older browsers */
+            margin-bottom: var(--space-4); /* 16px vertical spacing between cards */
+        }
+
+        /* 2 columns for small desktop (1024px+) */
+        @media (min-width: 1024px) {
+            .ds-subsections-grid {
+                column-count: 2;
+            }
+        }
+
+        /* 3 columns for desktop (1280px+) - MAX */
+        @media (min-width: 1280px) {
+            .ds-subsections-grid {
+                column-count: 3; /* Maximum 3 columns for better readability */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="ds-container">
+        <!-- Header -->
+        <header class="ds-header">
+            <h1>Hyper Launcher Design System</h1>
+            <span class="ds-version">v3.1</span>
+            <p class="ds-subtitle">Atomic Design Methodology</p>
+            <p class="ds-description">
+                A comprehensive component library organized by atomic design principles:
+                Design Tokens → Atoms → Molecules → Organisms → Templates
+            </p>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="ds-nav">
+            <ul class="ds-nav-list">
+                <li><a href="#tokens" class="ds-nav-link">Design Tokens</a></li>
+                <li><a href="#atoms" class="ds-nav-link">Atoms</a></li>
+                <li><a href="#molecules" class="ds-nav-link">Molecules</a></li>
+                <li><a href="#organisms" class="ds-nav-link">Organisms</a></li>
+                <li><a href="#templates" class="ds-nav-link">Templates</a></li>
+            </ul>
+        </nav>
+
+        <!-- ============================================
+             DESIGN TOKENS (Foundation)
+             ============================================ -->
+        <section id="tokens" class="ds-section">
+            <h2 class="ds-section-title">
+                <span>Design Tokens</span>
+                <span class="ds-level-badge ds-level-tokens">Foundation</span>
+            </h2>
+            <p class="ds-section-description">
+                Core design values that define the visual language. These CSS custom properties are used throughout all components.
+            </p>
+
+            <div class="ds-subsections-single">
+            <!-- Colors -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Color Palette</h3>
+
+                <h4 style="color: var(--text-primary); margin-top: var(--space-6); margin-bottom: var(--space-3);">Primary Colors</h4>
+                <div class="ds-color-grid">
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #4CAF50;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Primary</div>
+                            <div class="ds-color-value">--primary: #4CAF50</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #45a049;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Primary Hover</div>
+                            <div class="ds-color-value">--primary-hover: #45a049</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: rgba(76, 175, 80, 0.15);"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Primary Light</div>
+                            <div class="ds-color-value">rgba(76, 175, 80, 0.15)</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: rgba(76, 175, 80, 0.4); border: 2px dashed #4CAF50;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Primary Border</div>
+                            <div class="ds-color-value">rgba(76, 175, 80, 0.4)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--text-primary); margin-top: var(--space-6); margin-bottom: var(--space-3);">Semantic Colors</h4>
+                <div class="ds-color-grid">
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #2196F3;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Secondary</div>
+                            <div class="ds-color-value">--secondary: #2196F3</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #f44336;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Danger</div>
+                            <div class="ds-color-value">--danger: #f44336</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #E08B35;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Warning</div>
+                            <div class="ds-color-value">--warning: #E08B35 (darker, more saturated for better contrast with white text)</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #4CAF50;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Success</div>
+                            <div class="ds-color-value">--success: #4CAF50</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--text-primary); margin-top: var(--space-6); margin-bottom: var(--space-3);">Surface Colors</h4>
+                <div class="ds-color-grid">
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #1a1a1a;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Surface</div>
+                            <div class="ds-color-value">--surface: #1a1a1a</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #2a2a2a;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Surface Elevated</div>
+                            <div class="ds-color-value">--surface-elevated: #2a2a2a</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #333333;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Surface Hover</div>
+                            <div class="ds-color-value">--surface-hover: #333333</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #404040;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Surface Active</div>
+                            <div class="ds-color-value">--surface-active: #404040</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Surface Overlay</div>
+                            <div class="ds-color-value">rgba(0, 0, 0, 0.85)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--text-primary); margin-top: var(--space-6); margin-bottom: var(--space-3);">Text Colors</h4>
+                <div class="ds-color-grid">
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #ffffff;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Text Primary</div>
+                            <div class="ds-color-value">--text-primary: #ffffff</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #e0e0e0;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Text Secondary</div>
+                            <div class="ds-color-value">--text-secondary: #e0e0e0</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #b0b0b0;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Text Tertiary</div>
+                            <div class="ds-color-value">--text-tertiary: #b0b0b0</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: #666666;"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Text Disabled</div>
+                            <div class="ds-color-value">--text-disabled: #666666</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--text-primary); margin-top: var(--space-6); margin-bottom: var(--space-3);">Border Colors</h4>
+                <div class="ds-color-grid">
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: rgba(255, 255, 255, 0.15);"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Border</div>
+                            <div class="ds-color-value">rgba(255, 255, 255, 0.15)</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: rgba(255, 255, 255, 0.25);"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Border Hover</div>
+                            <div class="ds-color-value">rgba(255, 255, 255, 0.25)</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: rgba(76, 175, 80, 0.6);"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Border Focus</div>
+                            <div class="ds-color-value">rgba(76, 175, 80, 0.6)</div>
+                        </div>
+                    </div>
+                    <div class="ds-color-swatch">
+                        <div class="ds-color-preview" style="background: rgba(76, 175, 80, 0.8);"></div>
+                        <div class="ds-color-info">
+                            <div class="ds-color-name">Border Active</div>
+                            <div class="ds-color-value">rgba(76, 175, 80, 0.8)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typography -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Typography</h3>
+
+                <h4 style="color: var(--text-primary); margin-top: var(--space-4); margin-bottom: var(--space-3);">Font Sizes</h4>
+                <div class="ds-type-scale">
+                    <div class="ds-type-example">
+                        <span class="ds-type-label">--text-xs (12px)</span>
+                        <span style="font-size: var(--text-xs);">The quick brown fox jumps over the lazy dog</span>
+                    </div>
+                    <div class="ds-type-example">
+                        <span class="ds-type-label">--text-sm (14px)</span>
+                        <span style="font-size: var(--text-sm);">The quick brown fox jumps over the lazy dog</span>
+                    </div>
+                    <div class="ds-type-example">
+                        <span class="ds-type-label">--text-base (16px)</span>
+                        <span style="font-size: var(--text-base);">The quick brown fox jumps over the lazy dog</span>
+                    </div>
+                    <div class="ds-type-example">
+                        <span class="ds-type-label">--text-lg (18px)</span>
+                        <span style="font-size: var(--text-lg);">The quick brown fox jumps over the lazy dog</span>
+                    </div>
+                    <div class="ds-type-example">
+                        <span class="ds-type-label">--text-xl (20px)</span>
+                        <span style="font-size: var(--text-xl);">The quick brown fox jumps over the lazy dog</span>
+                    </div>
+                    <div class="ds-type-example">
+                        <span class="ds-type-label">--text-2xl (24px)</span>
+                        <span style="font-size: var(--text-2xl);">The quick brown fox jumps over the lazy dog</span>
+                    </div>
+                </div>
+
+                <h4 style="color: var(--text-primary); margin-top: var(--space-6); margin-bottom: var(--space-3);">Font Weights</h4>
+                <div class="ds-type-scale">
+                    <div class="ds-type-example">
+                        <span class="ds-type-label">--font-normal (400)</span>
+                        <span style="font-weight: var(--font-normal); font-size: var(--text-base);">The quick brown fox jumps over the lazy dog</span>
+                    </div>
+                    <div class="ds-type-example">
+                        <span class="ds-type-label">--font-medium (500)</span>
+                        <span style="font-weight: var(--font-medium); font-size: var(--text-base);">The quick brown fox jumps over the lazy dog</span>
+                    </div>
+                    <div class="ds-type-example">
+                        <span class="ds-type-label">--font-semibold (600)</span>
+                        <span style="font-weight: var(--font-semibold); font-size: var(--text-base);">The quick brown fox jumps over the lazy dog</span>
+                    </div>
+                    <div class="ds-type-example">
+                        <span class="ds-type-label">--font-bold (700)</span>
+                        <span style="font-weight: var(--font-bold); font-size: var(--text-base);">The quick brown fox jumps over the lazy dog</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spacing -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Spacing System</h3>
+                <p class="ds-description-text">Based on an 8px grid system for consistent spacing throughout the interface.</p>
+
+                <div class="ds-spacing-grid">
+                    <div class="ds-spacing-box">
+                        <div class="ds-spacing-label">space-1</div>
+                        <div class="ds-spacing-value">4px</div>
+                        <div class="ds-spacing-visual" style="width: 4px; height: 40px;"></div>
+                    </div>
+                    <div class="ds-spacing-box">
+                        <div class="ds-spacing-label">space-2</div>
+                        <div class="ds-spacing-value">8px</div>
+                        <div class="ds-spacing-visual" style="width: 8px; height: 40px;"></div>
+                    </div>
+                    <div class="ds-spacing-box">
+                        <div class="ds-spacing-label">space-3</div>
+                        <div class="ds-spacing-value">12px</div>
+                        <div class="ds-spacing-visual" style="width: 12px; height: 40px;"></div>
+                    </div>
+                    <div class="ds-spacing-box">
+                        <div class="ds-spacing-label">space-4</div>
+                        <div class="ds-spacing-value">16px</div>
+                        <div class="ds-spacing-visual" style="width: 16px; height: 40px;"></div>
+                    </div>
+                    <div class="ds-spacing-box">
+                        <div class="ds-spacing-label">space-6</div>
+                        <div class="ds-spacing-value">24px</div>
+                        <div class="ds-spacing-visual" style="width: 24px; height: 40px;"></div>
+                    </div>
+                    <div class="ds-spacing-box">
+                        <div class="ds-spacing-label">space-8</div>
+                        <div class="ds-spacing-value">32px</div>
+                        <div class="ds-spacing-visual" style="width: 32px; height: 40px;"></div>
+                    </div>
+                    <div class="ds-spacing-box">
+                        <div class="ds-spacing-label">space-12</div>
+                        <div class="ds-spacing-value">48px</div>
+                        <div class="ds-spacing-visual" style="width: 48px; height: 40px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shadows -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Shadows</h3>
+                <p class="ds-description-text">Elevation system using box shadows to create depth hierarchy.</p>
+
+                <div class="ds-shadow-grid">
+                    <div class="ds-shadow-box shadow-sm">
+                        <div class="ds-spacing-label">shadow-sm</div>
+                        <div class="ds-spacing-value">0 2px 4px rgba(0,0,0,0.3)</div>
+                    </div>
+                    <div class="ds-shadow-box shadow-md">
+                        <div class="ds-spacing-label">shadow-md</div>
+                        <div class="ds-spacing-value">0 4px 8px rgba(0,0,0,0.4)</div>
+                    </div>
+                    <div class="ds-shadow-box shadow-lg">
+                        <div class="ds-spacing-label">shadow-lg</div>
+                        <div class="ds-spacing-value">0 8px 16px rgba(0,0,0,0.5)</div>
+                    </div>
+                    <div class="ds-shadow-box" style="box-shadow: 0 12px 24px rgba(0, 0, 0, 0.6);">
+                        <div class="ds-spacing-label">shadow-xl</div>
+                        <div class="ds-spacing-value">0 12px 24px rgba(0,0,0,0.6)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Border Radius -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Border Radius</h3>
+                <p class="ds-description-text">Consistent rounding for UI elements.</p>
+
+                <div class="ds-radius-grid">
+                    <div class="ds-radius-box">
+                        <div class="ds-spacing-label">radius-sm</div>
+                        <div class="ds-spacing-value">6px</div>
+                        <div class="ds-radius-visual rounded-sm"></div>
+                    </div>
+                    <div class="ds-radius-box">
+                        <div class="ds-spacing-label">radius-md</div>
+                        <div class="ds-spacing-value">8px</div>
+                        <div class="ds-radius-visual rounded-md"></div>
+                    </div>
+                    <div class="ds-radius-box">
+                        <div class="ds-spacing-label">radius-lg</div>
+                        <div class="ds-spacing-value">12px</div>
+                        <div class="ds-radius-visual rounded-lg"></div>
+                    </div>
+                    <div class="ds-radius-box">
+                        <div class="ds-spacing-label">radius-xl</div>
+                        <div class="ds-spacing-value">16px</div>
+                        <div class="ds-radius-visual rounded-xl"></div>
+                    </div>
+                    <div class="ds-radius-box">
+                        <div class="ds-spacing-label">radius-full</div>
+                        <div class="ds-spacing-value">9999px</div>
+                        <div class="ds-radius-visual rounded-full"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transitions -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Transitions</h3>
+                <div class="ds-card">
+                    <div class="ds-preview">
+                        <div style="display: flex; gap: var(--space-4); flex-wrap: wrap;">
+                            <div style="padding: var(--space-3); background: var(--surface-elevated); border-radius: var(--radius-md);">
+                                <code>--transition-fast: 0.1s ease</code>
+                            </div>
+                            <div style="padding: var(--space-3); background: var(--surface-elevated); border-radius: var(--radius-md);">
+                                <code>--transition: 0.2s ease</code>
+                            </div>
+                            <div style="padding: var(--space-3); background: var(--surface-elevated); border-radius: var(--radius-md);">
+                                <code>--transition-slow: 0.3s ease</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Z-Index -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Z-Index Scale</h3>
+                <p class="ds-description-text">Layering hierarchy for stacking contexts.</p>
+                <div class="ds-card">
+                    <div class="ds-preview column">
+                        <div style="display: flex; flex-direction: column; gap: var(--space-2);">
+                            <code>--z-base: 0</code>
+                            <code>--z-dropdown: 10</code>
+                            <code>--z-sticky: 20</code>
+                            <code>--z-fixed: 30</code>
+                            <code>--z-modal-backdrop: 40</code>
+                            <code>--z-modal: 50</code>
+                            <code>--z-tooltip: 70</code>
+                            <code>--z-toast: 80</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- end ds-subsections-single -->
+        </section>
+
+        <!-- ============================================
+             ATOMS
+             ============================================ -->
+        <section id="atoms" class="ds-section">
+            <h2 class="ds-section-title">
+                <span>Atoms</span>
+                <span class="ds-level-badge ds-level-atoms">Level 1</span>
+            </h2>
+            <p class="ds-section-description">
+                The smallest, most fundamental building blocks. These cannot be broken down further without losing their purpose.
+            </p>
+
+            <div class="ds-subsections-grid">
+            <!-- Icons & Emojis -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Icons & Emojis</h3>
+                <p class="ds-description-text">The extension uses emoji icons for a friendly, accessible interface.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Common Icons</h4>
+                    </div>
+                    <div class="ds-preview">
+                        <span style="font-size: 32px;">🚀</span>
+                        <span style="font-size: 32px;">🏥</span>
+                        <span style="font-size: 32px;">➕</span>
+                        <span style="font-size: 32px;">⚙️</span>
+                        <span style="font-size: 32px;">📚</span>
+                        <span style="font-size: 32px;">🔍</span>
+                        <span style="font-size: 32px;">📤</span>
+                        <span style="font-size: 32px;">📥</span>
+                        <span style="font-size: 32px;">🧹</span>
+                        <span style="font-size: 32px;">⊞</span>
+                        <span style="font-size: 32px;">⊟</span>
+                        <span style="font-size: 32px;">☰</span>
+                        <span style="font-size: 32px;">↺</span>
+                        <span style="font-size: 32px;">⋯</span>
+                        <span style="font-size: 32px;">×</span>
+                        <span style="font-size: 32px;">⭐</span>
+                        <span style="font-size: 32px;">📑</span>
+                        <span style="font-size: 32px;">📌</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Badges -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Badges</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Count Badge (Sickbay)</h4>
+                        <button class="ds-copy-btn" data-copy="count-badge">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div style="position: relative; display: inline-block;">
+                            <button class="btn">
+                                <span>🏥</span>
+                                <span>Sickbay</span>
+                            </button>
+                            <span class="sickbay-badge" style="display: flex; position: absolute; top: -6px; right: -6px;">5</span>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-count-badge">&lt;!-- Button must have position: relative --&gt;
+&lt;button class="btn" style="position: relative;"&gt;
+  &lt;span&gt;🏥&lt;/span&gt;
+  &lt;span&gt;Sickbay&lt;/span&gt;
+  &lt;span class="sickbay-badge"&gt;5&lt;/span&gt;
+&lt;/button&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Brand Badge (Version)</h4>
+                        <button class="ds-copy-btn" data-copy="brand-badge">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <span class="brand-badge">v3.1</span>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-brand-badge">&lt;span class="brand-badge"&gt;v3.1&lt;/span&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dividers -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Dividers</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Dropdown Divider</h4>
+                        <button class="ds-copy-btn" data-copy="divider">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview column">
+                        <div class="dropdown-divider"></div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-divider">&lt;div class="dropdown-divider"&gt;&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Dots -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Status Dots</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Status Indicator Dots</h4>
+                        <button class="ds-copy-btn" data-copy="status-dots">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div style="display: flex; gap: var(--space-6); align-items: center; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: var(--space-2);">
+                                <span class="status-dot"></span>
+                                <span>Active (Primary)</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--space-2);">
+                                <span class="status-dot inactive"></span>
+                                <span>Inactive (Danger)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-status-dots">&lt;span class="status-dot"&gt;&lt;/span&gt;
+&lt;span class="status-dot inactive"&gt;&lt;/span&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Skip Link -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Skip Link (Accessibility)</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Skip to Main Content</h4>
+                        <button class="ds-copy-btn" data-copy="skip-link">Copy HTML</button>
+                    </div>
+                    <p class="ds-usage-note">This link is hidden until focused via keyboard navigation (Tab key). Try tabbing into this page to see it.</p>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-skip-link">&lt;a href="#main-content" class="skip-link"&gt;Skip to main content&lt;/a&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen Reader Only -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Screen Reader Only</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Visually Hidden Content</h4>
+                        <button class="ds-copy-btn" data-copy="sr-only">Copy HTML</button>
+                    </div>
+                    <p class="ds-usage-note">Content with this class is visually hidden but accessible to screen readers.</p>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-sr-only">&lt;span class="sr-only"&gt;Descriptive text for screen readers&lt;/span&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tooltips -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Tooltips</h3>
+                <p class="ds-description-text">Contextual help text that appears on hover, primarily used in thumbnail view to show hidden titles.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Tooltip (Popup)</h4>
+                        <button class="ds-copy-btn" data-copy="tooltip">Copy HTML</button>
+                    </div>
+                    <p class="ds-usage-note">General tooltip with pointer. Shows/hides via .visible class.</p>
+                    <div class="ds-preview" style="min-height: 80px; align-items: flex-start; padding-top: 50px;">
+                        <div style="position: relative; display: inline-block;">
+                            <button class="btn">Hover me</button>
+                            <div class="tooltip" style="opacity: 1; position: absolute;">
+                                Tooltip content
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-tooltip">&lt;div class="tooltip"&gt;Tooltip content&lt;/div&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Thumbnail Tooltip (Popup)</h4>
+                        <button class="ds-copy-btn" data-copy="thumbnail-tooltip">Copy HTML</button>
+                    </div>
+                    <p class="ds-usage-note">Specialized tooltip for thumbnail view tiles. Automatically positioned above tile.</p>
+                    <div class="ds-preview" style="min-height: 80px; align-items: flex-start; padding-top: 50px;">
+                        <div style="position: relative; display: inline-block;">
+                            <div class="app-tile" style="width: 60px; height: 60px;">
+                                <div class="app-icon">📦</div>
+                            </div>
+                            <div class="thumbnail-tooltip" style="opacity: 1; position: absolute;">
+                                Package Name
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-thumbnail-tooltip">&lt;div class="thumbnail-tooltip"&gt;Package Name&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Indicators -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Tile Status Indicators (Popup)</h3>
+                <p class="ds-description-text">Small colored dots that appear on tiles to indicate status (Sickbay item, recently used, etc.).</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Status Indicator Dots</h4>
+                        <button class="ds-copy-btn" data-copy="status-indicator-tile">Copy HTML</button>
+                    </div>
+                    <p class="ds-usage-note">Positioned absolutely at top-left of tiles. Variants: .sickbay (orange), .recently-used (blue).</p>
+                    <div class="ds-preview">
+                        <div style="display: flex; gap: 24px; align-items: center;">
+                            <div style="position: relative; width: 60px; height: 60px; background: var(--surface-elevated); border: 2px solid var(--border); border-radius: var(--radius-lg);">
+                                <div class="status-indicator-tile sickbay"></div>
+                            </div>
+                            <div style="position: relative; width: 60px; height: 60px; background: var(--surface-elevated); border: 2px solid var(--border); border-radius: var(--radius-lg);">
+                                <div class="status-indicator-tile recently-used"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-status-indicator-tile">&lt;div class="status-indicator-tile sickbay"&gt;&lt;/div&gt;
+&lt;div class="status-indicator-tile recently-used"&gt;&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- end ds-subsections-grid -->
+        </section>
+
+        <!-- ============================================
+             MOLECULES
+             ============================================ -->
+        <section id="molecules" class="ds-section">
+            <h2 class="ds-section-title">
+                <span>Molecules</span>
+                <span class="ds-level-badge ds-level-molecules">Level 2</span>
+            </h2>
+            <p class="ds-section-description">
+                Simple groups of atoms functioning together as a unit. Each molecule serves a single, clear purpose.
+            </p>
+
+            <div class="ds-subsections-grid">
+            <!-- Buttons -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Buttons</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Button Variants</h4>
+                        <button class="ds-copy-btn" data-copy="button-variants">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <button class="btn">Default</button>
+                        <button class="btn btn-primary">Primary</button>
+                        <button class="btn btn-secondary">Secondary</button>
+                        <button class="btn btn-warning">Warning</button>
+                        <button class="btn btn-danger">Danger</button>
+                        <button class="btn btn-ghost">Ghost</button>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-button-variants">&lt;button class="btn"&gt;Default&lt;/button&gt;
+&lt;button class="btn btn-primary"&gt;Primary&lt;/button&gt;
+&lt;button class="btn btn-secondary"&gt;Secondary&lt;/button&gt;
+&lt;button class="btn btn-warning"&gt;Warning&lt;/button&gt;
+&lt;button class="btn btn-danger"&gt;Danger&lt;/button&gt;
+&lt;button class="btn btn-ghost"&gt;Ghost&lt;/button&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Button Sizes</h4>
+                        <button class="ds-copy-btn" data-copy="button-sizes">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <button class="btn btn-primary btn-sm">Small</button>
+                        <button class="btn btn-primary">Default</button>
+                        <button class="btn btn-primary btn-lg">Large</button>
+                        <button class="btn btn-primary btn-icon">⚙️</button>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-button-sizes">&lt;button class="btn btn-primary btn-sm"&gt;Small&lt;/button&gt;
+&lt;button class="btn btn-primary"&gt;Default&lt;/button&gt;
+&lt;button class="btn btn-primary btn-lg"&gt;Large&lt;/button&gt;
+&lt;button class="btn btn-primary btn-icon"&gt;⚙️&lt;/button&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Buttons with Icons</h4>
+                        <button class="ds-copy-btn" data-copy="button-icons">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <button class="btn btn-primary">
+                            <span>➕</span>
+                            <span>Add Item</span>
+                        </button>
+                        <button class="btn btn-danger">
+                            <span>🗑️</span>
+                            <span>Delete</span>
+                        </button>
+                        <button class="btn btn-secondary">
+                            <span>📥</span>
+                            <span>Import</span>
+                        </button>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-button-icons">&lt;button class="btn btn-primary"&gt;
+  &lt;span&gt;➕&lt;/span&gt;
+  &lt;span&gt;Add Item&lt;/span&gt;
+&lt;/button&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Button States</h4>
+                    </div>
+                    <div class="ds-preview column">
+                        <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
+                            <div>
+                                <span class="ds-state-label">Default</span>
+                                <button class="btn btn-primary">Click Me</button>
+                            </div>
+                            <div>
+                                <span class="ds-state-label">Hover</span>
+                                <button class="btn btn-primary" style="background: var(--primary-hover); transform: translateY(-1px); box-shadow: var(--shadow-sm);">Hovered</button>
+                            </div>
+                            <div>
+                                <span class="ds-state-label">Disabled</span>
+                                <button class="btn btn-primary" disabled>Disabled</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons on Tiles -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Tile Action Buttons</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Delete & Move Buttons</h4>
+                        <button class="ds-copy-btn" data-copy="tile-actions">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div style="position: relative; display: inline-block; width: 120px; height: 120px; background: var(--surface-elevated); border: 2px solid var(--border); border-radius: var(--radius-lg);">
+                            <button class="delete-btn" style="display: flex;">×</button>
+                            <button class="move-to-main-btn" title="Move to main bookmarks (irreversible)">↑</button>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-tile-actions">&lt;button class="delete-btn"&gt;×&lt;/button&gt;
+&lt;button class="move-to-main-btn" title="Move to main bookmarks (irreversible)"&gt;↑&lt;/button&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Elements -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Form Elements</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Text Input</h4>
+                        <button class="ds-copy-btn" data-copy="input-basic">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview column">
+                        <input type="text" class="input" placeholder="Enter text..." style="max-width: 400px;">
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-input-basic">&lt;input type="text" class="input" placeholder="Enter text..."&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Form Group</h4>
+                        <button class="ds-copy-btn" data-copy="form-group">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview column">
+                        <div class="form-group" style="max-width: 400px;">
+                            <label for="example-input" class="form-label">Label</label>
+                            <input type="text" id="example-input" class="input" placeholder="Placeholder text">
+                            <div class="form-help">Helper text goes here</div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-form-group">&lt;div class="form-group"&gt;
+  &lt;label for="example-input" class="form-label"&gt;Label&lt;/label&gt;
+  &lt;input type="text" id="example-input" class="input" placeholder="Placeholder text"&gt;
+  &lt;div class="form-help"&gt;Helper text goes here&lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Radio Group</h4>
+                        <button class="ds-copy-btn" data-copy="radio-group">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview column">
+                        <div class="form-group" style="max-width: 400px;">
+                            <label class="form-label">Choose an option</label>
+                            <div class="radio-group">
+                                <label class="radio-option">
+                                    <input type="radio" name="demo-radio" value="option1" checked>
+                                    <span>Option 1</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="demo-radio" value="option2">
+                                    <span>Option 2</span>
+                                </label>
+                                <label class="radio-option">
+                                    <input type="radio" name="demo-radio" value="option3">
+                                    <span>Option 3</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-radio-group">&lt;div class="radio-group"&gt;
+  &lt;label class="radio-option"&gt;
+    &lt;input type="radio" name="demo-radio" value="option1" checked&gt;
+    &lt;span&gt;Option 1&lt;/span&gt;
+  &lt;/label&gt;
+  &lt;label class="radio-option"&gt;
+    &lt;input type="radio" name="demo-radio" value="option2"&gt;
+    &lt;span&gt;Option 2&lt;/span&gt;
+  &lt;/label&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Search Input with Clear Button</h4>
+                        <button class="ds-copy-btn" data-copy="search-input">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview column">
+                        <div style="position: relative; max-width: 400px;">
+                            <input type="search" class="input" placeholder="Search..." style="padding-right: 40px;">
+                            <button class="search-clear" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%);">×</button>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-search-input">&lt;div style="position: relative;"&gt;
+  &lt;input type="search" class="input" placeholder="Search..."&gt;
+  &lt;button class="search-clear"&gt;×&lt;/button&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Input with Clear Button (Popup)</h4>
+                        <button class="ds-copy-btn" data-copy="input-with-clear">Copy HTML</button>
+                    </div>
+                    <p class="ds-usage-note">Wrapper for text inputs with inline clear button. Uses input-clear-btn class for the button.</p>
+                    <div class="ds-preview column">
+                        <div class="input-with-clear" style="max-width: 400px;">
+                            <input type="text" class="input" placeholder="Enter text..." value="Sample text">
+                            <button type="button" class="input-clear-btn" style="display: flex;">×</button>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-input-with-clear">&lt;div class="input-with-clear"&gt;
+  &lt;input type="text" class="input" placeholder="Enter text..."&gt;
+  &lt;button type="button" class="input-clear-btn"&gt;×&lt;/button&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toggle Buttons -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Toggle Buttons</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Toggle Group (Quick Add Style)</h4>
+                        <button class="ds-copy-btn" data-copy="toggle-group">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div class="toggle-group">
+                            <button class="toggle-btn active">Main</button>
+                            <button class="toggle-btn">Sickbay</button>
+                        </div>
+                        <div class="toggle-group">
+                            <button class="toggle-btn active">Front</button>
+                            <button class="toggle-btn">End</button>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-toggle-group">&lt;div class="toggle-group"&gt;
+  &lt;button class="toggle-btn active"&gt;Main&lt;/button&gt;
+  &lt;button class="toggle-btn"&gt;Sickbay&lt;/button&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stat Item -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Stat Item</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Statistics Display (Footer)</h4>
+                        <button class="ds-copy-btn" data-copy="stat-item">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div class="stat-item">
+                            <span class="stat-label">Total:</span>
+                            <span class="stat-value">42</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Sickbay:</span>
+                            <span class="stat-value has-sickbay">5</span>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-stat-item">&lt;div class="stat-item"&gt;
+  &lt;span class="stat-label"&gt;Total:&lt;/span&gt;
+  &lt;span class="stat-value"&gt;42&lt;/span&gt;
+&lt;/div&gt;
+
+&lt;!-- With badge styling --&gt;
+&lt;div class="stat-item"&gt;
+  &lt;span class="stat-label"&gt;Sickbay:&lt;/span&gt;
+  &lt;span class="stat-value has-sickbay"&gt;5&lt;/span&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dropdown Item -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Dropdown Item</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Menu Item</h4>
+                        <button class="ds-copy-btn" data-copy="dropdown-item">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview column">
+                        <button class="dropdown-item">
+                            <span>📤</span>
+                            <span>Export Data</span>
+                        </button>
+                        <button class="dropdown-item">
+                            <span>📥</span>
+                            <span>Import Data</span>
+                        </button>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-dropdown-item">&lt;button class="dropdown-item"&gt;
+  &lt;span&gt;📤&lt;/span&gt;
+  &lt;span&gt;Export Data&lt;/span&gt;
+&lt;/button&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Menu Item with Setting Indicator (Popup)</h4>
+                        <button class="ds-copy-btn" data-copy="dropdown-item-setting">Copy HTML</button>
+                    </div>
+                    <p class="ds-usage-note">Dropdown items can include a setting indicator on the right showing current value or state.</p>
+                    <div class="ds-preview column">
+                        <button class="dropdown-item">
+                            <span>🔤</span>
+                            <span>Font Size</span>
+                            <span class="setting-indicator">14px</span>
+                        </button>
+                        <button class="dropdown-item">
+                            <span>🌈</span>
+                            <span>Theme</span>
+                            <span class="setting-indicator">Dark</span>
+                        </button>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-dropdown-item-setting">&lt;button class="dropdown-item"&gt;
+  &lt;span&gt;🔤&lt;/span&gt;
+  &lt;span&gt;Font Size&lt;/span&gt;
+  &lt;span class="setting-indicator"&gt;14px&lt;/span&gt;
+&lt;/button&gt;</pre>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- end ds-subsections-grid -->
+        </section>
+
+        <!-- ============================================
+             ORGANISMS
+             ============================================ -->
+        <section id="organisms" class="ds-section">
+            <h2 class="ds-section-title">
+                <span>Organisms</span>
+                <span class="ds-level-badge ds-level-organisms">Level 3</span>
+            </h2>
+            <p class="ds-section-description">
+                Complex UI components composed of molecules and atoms. These form distinct sections of the interface with specific functions.
+            </p>
+
+            <!-- App Tiles - Full Width Two Column Layout -->
+            <div class="ds-subsection" style="grid-column: 1 / -1; max-width: 100%;">
+                <h3 class="ds-subsection-title">App Tiles - Complete State Matrix</h3>
+                <p class="ds-description-text">The core bookmark display component. Tiles have 3 view modes × 2 icon types × 3 interaction states = 18 variations. Additional states include dragging, drag-over, and focus.</p>
+
+                <!-- Two Column Grid for Tile Cards -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); margin-top: var(--space-4);">
+                    <!-- GRID VIEW TILES -->
+                    <div class="ds-card">
+                        <div class="ds-card-header">
+                            <h4 class="ds-card-title">Grid View - All States</h4>
+                        </div>
+                        <p class="ds-usage-note"><strong>Desktop (≥1200px):</strong> Fixed 120px × 120px square tiles. <strong>Tablet (768-1199px):</strong> 100-120px responsive. <strong>Mobile (<768px):</strong> 90-110px responsive. <strong>Popup:</strong> 85-95px constrained. Icon: 48px (desktop), 40px (mobile). Shows emoji icons and favicons in default, sickbay, and hovered states.</p>
+                        <div class="ds-preview">
+                            <div class="ds-tile-grid" style="display: grid; grid-template-columns: repeat(3, 120px); gap: 16px;">
+                                <!-- Default with Emoji Icon -->
+                                <div class="app-tile" style="width: 120px; height: 100px;">
+                                    <div class="app-icon">🌐</div>
+                                    <div class="app-title">Default</div>
+                                </div>
+                                <!-- Default with Favicon -->
+                                <div class="app-tile" style="width: 120px; height: 100px;">
+                                    <div class="app-icon has-favicon" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%234CAF50%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2270%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22>F</text></svg>'); background-size: contain;"></div>
+                                    <div class="app-title">With Favicon</div>
+                                </div>
+                                <!-- Sickbay with Move Button -->
+                                <div class="app-tile" style="width: 120px; height: 100px;">
+                                    <div class="app-icon">🏥</div>
+                                    <div class="app-title">Sickbay</div>
+                                    <button class="move-to-main-btn" title="Move to main bookmarks (irreversible)">↑</button>
+                                </div>
+                                <!-- Hovered with Delete Button -->
+                                <div class="app-tile" style="width: 120px; height: 100px;">
+                                    <div class="app-icon">📧</div>
+                                    <div class="app-title">Hovered</div>
+                                    <button class="delete-btn" style="display: flex;">×</button>
+                                </div>
+                                <!-- Dragging State -->
+                                <div class="app-tile dragging" style="width: 120px; height: 100px;">
+                                    <div class="app-icon">📊</div>
+                                    <div class="app-title">Dragging</div>
+                                </div>
+                                <!-- Drag Over State -->
+                                <div class="app-tile drag-over" style="width: 120px; height: 100px;">
+                                    <div class="app-icon">⚙️</div>
+                                    <div class="app-title">Drag Target</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ds-code">
+                            <span class="ds-code-lang">HTML</span>
+                            <pre id="code-app-tile-grid">&lt;!-- Default State --&gt;
+&lt;div class="app-tile"&gt;
+  &lt;div class="app-icon"&gt;🌐&lt;/div&gt;
+  &lt;div class="app-title"&gt;Default&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- With Favicon --&gt;
+&lt;div class="app-tile"&gt;
+  &lt;div class="app-icon has-favicon" style="background-image: url(...)"&gt;&lt;/div&gt;
+  &lt;div class="app-title"&gt;With Favicon&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- Sickbay (with move button) --&gt;
+&lt;div class="app-tile"&gt;
+  &lt;div class="app-icon"&gt;🏥&lt;/div&gt;
+  &lt;div class="app-title"&gt;Sickbay&lt;/div&gt;
+  &lt;button class="move-to-main-btn" title="Move to main bookmarks (irreversible)"&gt;↑&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- Hovered (delete button visible) --&gt;
+&lt;div class="app-tile"&gt;
+  &lt;div class="app-icon"&gt;📧&lt;/div&gt;
+  &lt;div class="app-title"&gt;Hovered&lt;/div&gt;
+  &lt;button class="delete-btn"&gt;×&lt;/button&gt;  &lt;!-- shown on :hover --&gt;
+&lt;/div&gt;
+
+&lt;!-- Dragging --&gt;
+&lt;div class="app-tile dragging"&gt;...&lt;/div&gt;
+
+&lt;!-- Drag Over --&gt;
+&lt;div class="app-tile drag-over"&gt;...&lt;/div&gt;</pre>
+                        </div>
+                    </div>
+
+                    <!-- THUMBNAIL VIEW TILES -->
+                    <div class="ds-card">
+                        <div class="ds-card-header">
+                            <h4 class="ds-card-title">Thumbnail View - All States</h4>
+                        </div>
+                        <p class="ds-usage-note"><strong>Desktop (≥1200px):</strong> Fixed 80px × 80px square tiles. <strong>Tablet (768-1199px):</strong> 75-85px responsive. <strong>Mobile (<768px):</strong> 70-80px responsive. <strong>Popup:</strong> 68-75px constrained. Icon: 40px (desktop), 36px (mobile). Tiles show only icons—titles hidden via CSS, appear on hover via native tooltip.</p>
+                        <div class="ds-preview">
+                            <div class="thumbnail-view">
+                                <div style="display: grid; grid-template-columns: repeat(6, 80px); gap: 12px;">
+                                    <!-- Default with Emoji -->
+                                    <div class="app-tile" title="Default">
+                                        <div class="app-icon">🌐</div>
+                                        <div class="app-title">Default</div>
+                                    </div>
+                                    <!-- Default with Favicon -->
+                                    <div class="app-tile" title="With Favicon">
+                                        <div class="app-icon has-favicon" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%232196F3%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2270%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22>F</text></svg>'); background-size: contain;"></div>
+                                        <div class="app-title">With Favicon</div>
+                                    </div>
+                                    <!-- Sickbay -->
+                                    <div class="app-tile" title="Sickbay">
+                                        <div class="app-icon">🏥</div>
+                                        <div class="app-title">Sickbay</div>
+                                        <button class="move-to-main-btn" title="Move to main bookmarks (irreversible)">↑</button>
+                                    </div>
+                                    <!-- Hovered -->
+                                    <div class="app-tile" title="Hovered">
+                                        <div class="app-icon">📧</div>
+                                        <div class="app-title">Hovered</div>
+                                        <button class="delete-btn" style="display: flex;">×</button>
+                                    </div>
+                                    <!-- Dragging -->
+                                    <div class="app-tile dragging" title="Dragging">
+                                        <div class="app-icon">📊</div>
+                                        <div class="app-title">Dragging</div>
+                                    </div>
+                                    <!-- Drag Over -->
+                                    <div class="app-tile drag-over" title="Drag Target">
+                                        <div class="app-icon">⚙️</div>
+                                        <div class="app-title">Drag Target</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ds-code">
+                            <span class="ds-code-lang">HTML</span>
+                            <pre id="code-app-tile-thumbnail">&lt;div class="thumbnail-view"&gt;
+  &lt;div class="apps-grid"&gt;
+    &lt;!-- Always include title attribute for tooltip --&gt;
+    &lt;div class="app-tile" title="Example"&gt;
+      &lt;div class="app-icon"&gt;🌐&lt;/div&gt;
+      &lt;div class="app-title"&gt;Example&lt;/div&gt;  &lt;!-- Hidden via CSS --&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- CSS: .thumbnail-view .app-title { display: none; } --&gt;</pre>
+                        </div>
+                    </div>
+
+                    <!-- LIST VIEW TILES -->
+                    <div class="ds-card">
+                        <div class="ds-card-header">
+                            <h4 class="ds-card-title">List View - All States</h4>
+                        </div>
+                        <p class="ds-usage-note">Horizontal tiles with full width single column layout. <strong>Icon:</strong> 32px (desktop), 28px (mobile). <strong>Min-height:</strong> 60px (all breakpoints). Icon on left, title in middle with ellipsis, action buttons on right. No responsive width changes—always full width.</p>
+                        <div class="ds-preview column">
+                            <div class="list-view" style="width: 100%; max-width: 600px;">
+                                <div style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                                    <!-- Default with Emoji -->
+                                    <div class="app-tile">
+                                        <div class="app-icon">🌐</div>
+                                        <div class="app-title">Default State</div>
+                                    </div>
+                                    <!-- Default with Favicon -->
+                                    <div class="app-tile">
+                                        <div class="app-icon has-favicon" style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23FF9800%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2270%22 font-size=%2260%22 text-anchor=%22middle%22 fill=%22white%22>F</text></svg>'); background-size: contain;"></div>
+                                        <div class="app-title">With Favicon</div>
+                                    </div>
+                                    <!-- Sickbay -->
+                                    <div class="app-tile">
+                                        <div class="app-icon">🏥</div>
+                                        <div class="app-title">Sickbay Item</div>
+                                        <button class="move-to-main-btn" title="Move to main bookmarks (irreversible)">↑</button>
+                                    </div>
+                                    <!-- Hovered -->
+                                    <div class="app-tile">
+                                        <div class="app-icon">📧</div>
+                                        <div class="app-title">Hovered State with a Very Long Title That Gets Truncated</div>
+                                        <button class="delete-btn" style="display: flex;">×</button>
+                                    </div>
+                                    <!-- Dragging -->
+                                    <div class="app-tile dragging">
+                                        <div class="app-icon">📊</div>
+                                        <div class="app-title">Dragging State</div>
+                                    </div>
+                                    <!-- Drag Over -->
+                                    <div class="app-tile drag-over">
+                                        <div class="app-icon">⚙️</div>
+                                        <div class="app-title">Drag Over Target</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ds-code">
+                            <span class="ds-code-lang">HTML</span>
+                            <pre id="code-app-tile-list">&lt;div class="list-view"&gt;
+  &lt;div class="apps-grid"&gt;
+    &lt;div class="app-tile"&gt;
+      &lt;div class="app-icon"&gt;🌐&lt;/div&gt;
+      &lt;div class="app-title"&gt;Example Website&lt;/div&gt;
+      &lt;button class="delete-btn"&gt;×&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- CSS: .list-view .app-tile has flex-direction: row --&gt;</pre>
+                        </div>
+                    </div>
+
+                    <!-- TILE STATE REFERENCE -->
+                    <div class="ds-card">
+                        <div class="ds-card-header">
+                            <h4 class="ds-card-title">Tile State Reference</h4>
+                        </div>
+                        <p class="ds-usage-note">Quick reference for all tile states and when they apply.</p>
+                        <div class="ds-code">
+                            <span class="ds-code-lang">States & Classes</span>
+                            <pre><strong>Icon Types:</strong>
+• Default Icon: Emoji in .app-icon element
+• Favicon: .app-icon.has-favicon with background-image
+
+<strong>Interaction States:</strong>
+• Default: Base .app-tile styling
+• Hovered: :hover pseudo-class (delete button shows)
+• Sickbay: .move-to-main-btn present (orange ↑ button)
+• Dragging: .app-tile.dragging (semi-transparent, rotated)
+• Drag Over: .app-tile.drag-over (primary border, light bg)
+• Focus: :focus-visible (green outline ring)
+
+<strong>View Mode Classes:</strong>
+• Grid: .apps-grid (standard 3-column responsive)
+• Thumbnail: .thumbnail-view .apps-grid (4-6 columns, no titles)
+• List: .list-view .apps-grid (single column, horizontal tiles)
+
+<strong>Action Buttons:</strong>
+• .delete-btn - Red × button (top-right), shown on :hover
+• .move-to-main-btn - Orange ↑ button (bottom-right), always visible in sickbay, includes tooltip explaining irreversible action</pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ds-subsections-grid">
+            <!-- Grid Layout Controls -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Grid Layout Controls (Fullpage Only)</h3>
+                <p class="ds-description-text">Segmented control for selecting grid density: 9 columns (compact), 11 columns (comfortable), or 22 columns (roomy).</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Grid Size Selector</h4>
+                        <button class="ds-copy-btn" data-copy="grid-layout-controls">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div class="grid-layout-controls">
+                            <button class="grid-size-btn">9</button>
+                            <button class="grid-size-btn active">11</button>
+                            <button class="grid-size-btn">22</button>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-grid-layout-controls">&lt;div class="grid-layout-controls"&gt;
+  &lt;button class="grid-size-btn" data-size="compact"&gt;9&lt;/button&gt;
+  &lt;button class="grid-size-btn active" data-size="comfortable"&gt;11&lt;/button&gt;
+  &lt;button class="grid-size-btn" data-size="roomy"&gt;22&lt;/button&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View Controls -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">View Controls</h3>
+                <p class="ds-description-text">Segmented control for switching between Grid, Thumbnail, and List views. Fullpage has 3 options, popup has 4 (adds Canvas).</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">View Mode Selector (Fullpage)</h4>
+                        <button class="ds-copy-btn" data-copy="view-controls-fullpage">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div class="view-controls">
+                            <button class="view-btn active" title="Grid View">
+                                <span>⊞</span>
+                            </button>
+                            <button class="view-btn" title="Thumbnail View">
+                                <span>⊟</span>
+                            </button>
+                            <button class="view-btn" title="List View">
+                                <span>☰</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-view-controls-fullpage">&lt;div class="view-controls" role="tablist"&gt;
+  &lt;button class="view-btn active" title="Grid View"&gt;
+    &lt;span&gt;⊞&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;button class="view-btn" title="Thumbnail View"&gt;
+    &lt;span&gt;⊟&lt;/span&gt;
+  &lt;/button&gt;
+  &lt;button class="view-btn" title="List View"&gt;
+    &lt;span&gt;☰&lt;/span&gt;
+  &lt;/button&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">View Mode Selector (Popup - includes Canvas)</h4>
+                        <button class="ds-copy-btn" data-copy="view-controls-popup">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div class="view-controls">
+                            <button class="view-btn active" title="Grid View">⊞</button>
+                            <button class="view-btn" title="Canvas View">⊡</button>
+                            <button class="view-btn" title="Thumbnail View">⊟</button>
+                            <button class="view-btn" title="List View">☰</button>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-view-controls-popup">&lt;div class="view-controls" role="tablist"&gt;
+  &lt;button class="view-btn active"&gt;⊞&lt;/button&gt;
+  &lt;button class="view-btn"&gt;⊡&lt;/button&gt;
+  &lt;button class="view-btn"&gt;⊟&lt;/button&gt;
+  &lt;button class="view-btn"&gt;☰&lt;/button&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Mode Toggle -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Tab Mode Toggle</h3>
+                <p class="ds-description-text">Status indicator showing whether links open in background or foreground tabs.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Background Tab Indicator</h4>
+                        <button class="ds-copy-btn" data-copy="tab-mode-toggle">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div class="tab-mode-toggle">
+                            <span class="status-dot"></span>
+                            <span class="status-text">open in background</span>
+                        </div>
+                        <div class="tab-mode-toggle">
+                            <span class="status-dot inactive"></span>
+                            <span class="status-text">open in background</span>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-tab-mode-toggle">&lt;div class="tab-mode-toggle"&gt;
+  &lt;span class="status-dot"&gt;&lt;/span&gt;
+  &lt;span class="status-text"&gt;open in background&lt;/span&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dropdown Menus -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Dropdown Menus</h3>
+                <p class="ds-description-text">Complete dropdown menu with trigger button and content panel.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Settings Dropdown</h4>
+                        <button class="ds-copy-btn" data-copy="dropdown-menu">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div class="dropdown-container">
+                            <button class="btn btn-icon" id="demo-dropdown-trigger-2">⚙️</button>
+                            <div class="dropdown-content" id="demo-dropdown-2">
+                                <button class="dropdown-item">
+                                    <span>📌</span>
+                                    <span>Add to Bookmark Bar</span>
+                                </button>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item">
+                                    <span>📤</span>
+                                    <span>Export Data</span>
+                                </button>
+                                <button class="dropdown-item">
+                                    <span>📥</span>
+                                    <span>Import Data</span>
+                                </button>
+                                <div class="dropdown-divider"></div>
+                                <button class="dropdown-item">
+                                    <span>🧹</span>
+                                    <span>Clear Sickbay</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-dropdown-menu">&lt;div class="dropdown-container"&gt;
+  &lt;button class="btn btn-icon"&gt;⚙️&lt;/button&gt;
+  &lt;div class="dropdown-content"&gt;
+    &lt;button class="dropdown-item"&gt;
+      &lt;span&gt;📌&lt;/span&gt;
+      &lt;span&gt;Add to Bookmark Bar&lt;/span&gt;
+    &lt;/button&gt;
+    &lt;div class="dropdown-divider"&gt;&lt;/div&gt;
+    &lt;button class="dropdown-item"&gt;
+      &lt;span&gt;📤&lt;/span&gt;
+      &lt;span&gt;Export Data&lt;/span&gt;
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Empty States -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Empty States</h3>
+                <p class="ds-description-text">Friendly placeholders shown when there's no content to display.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Empty State - No Bookmarks</h4>
+                        <button class="ds-copy-btn" data-copy="empty-state-main">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview column">
+                        <div class="empty-state visible" style="position: relative; height: auto;">
+                            <div class="empty-state-content">
+                                <div class="empty-state-icon">📚</div>
+                                <h2>No bookmarks yet</h2>
+                                <p>Add your first bookmark using the buttons above</p>
+                                <div class="empty-state-actions">
+                                    <button class="btn btn-primary">Add Custom URL</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-empty-state-main">&lt;div class="empty-state visible"&gt;
+  &lt;div class="empty-state-content"&gt;
+    &lt;div class="empty-state-icon"&gt;📚&lt;/div&gt;
+    &lt;h2&gt;No bookmarks yet&lt;/h2&gt;
+    &lt;p&gt;Add your first bookmark using the buttons above&lt;/p&gt;
+    &lt;div class="empty-state-actions"&gt;
+      &lt;button class="btn btn-primary"&gt;Add Custom URL&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Empty State - Sickbay Empty</h4>
+                        <button class="ds-copy-btn" data-copy="empty-state-sickbay">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview column">
+                        <div class="empty-state visible" style="position: relative; height: auto;">
+                            <div class="empty-state-content">
+                                <div class="empty-state-icon">🏥</div>
+                                <h2>Sickbay is empty</h2>
+                                <p>Add temporary bookmarks here for later sorting</p>
+                                <div class="empty-state-actions">
+                                    <button class="btn btn-primary">Add to Sickbay</button>
+                                    <button class="btn btn-ghost">Back to Main</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-empty-state-sickbay">&lt;div class="empty-state visible"&gt;
+  &lt;div class="empty-state-content"&gt;
+    &lt;div class="empty-state-icon"&gt;🏥&lt;/div&gt;
+    &lt;h2&gt;Sickbay is empty&lt;/h2&gt;
+    &lt;p&gt;Add temporary bookmarks here for later sorting&lt;/p&gt;
+    &lt;div class="empty-state-actions"&gt;
+      &lt;button class="btn btn-primary"&gt;Add to Sickbay&lt;/button&gt;
+      &lt;button class="btn btn-ghost"&gt;Back to Main&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toast Notifications -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Toast Notifications</h3>
+                <p class="ds-description-text">Temporary notifications that appear in the top-right corner.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Toast Variants</h4>
+                    </div>
+                    <div class="ds-preview column">
+                        <div class="toast visible success" style="position: relative; transform: none;">Successfully saved!</div>
+                        <div class="toast visible error" style="position: relative; transform: none;">Something went wrong</div>
+                        <div class="toast visible warning" style="position: relative; transform: none;">Warning message</div>
+                        <div class="toast visible info" style="position: relative; transform: none;">Info notification</div>
+                    </div>
+                    <div class="ds-demo-controls">
+                        <button class="btn btn-primary" id="demo-toast-success-2">Show Success</button>
+                        <button class="btn btn-danger" id="demo-toast-error-2">Show Error</button>
+                        <button class="btn btn-warning" id="demo-toast-warning-2">Show Warning</button>
+                        <button class="btn btn-secondary" id="demo-toast-info-2">Show Info</button>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre>&lt;div class="toast success visible"&gt;Successfully saved!&lt;/div&gt;
+&lt;div class="toast error visible"&gt;Something went wrong&lt;/div&gt;
+&lt;div class="toast warning visible"&gt;Warning message&lt;/div&gt;
+&lt;div class="toast info visible"&gt;Info notification&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Dialogs -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Modal Dialogs</h3>
+                <p class="ds-description-text">Full-screen overlay dialogs with backdrop blur.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Standard Modal</h4>
+                    </div>
+                    <p class="ds-usage-note">Static example showing modal structure with backdrop blur. In actual implementation, modals are toggled with JavaScript.</p>
+                    <div class="ds-preview" style="min-height: 500px; padding: var(--space-8) var(--space-4); position: relative; background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 100%); border-radius: var(--radius-lg); overflow: hidden;">
+                        <div class="modal-overlay visible" style="position: absolute; inset: 0;">
+                            <div class="modal">
+                                <div class="modal-header">
+                                    <h2>Example Modal</h2>
+                                    <button class="btn btn-icon btn-ghost">×</button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>This modal demonstrates the full overlay with backdrop blur effect.</p>
+                                    <div class="form-group">
+                                        <label class="form-label">Example Field</label>
+                                        <input type="text" class="input" placeholder="Type something...">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-ghost">Cancel</button>
+                                    <button class="btn btn-primary">Save Changes</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre>&lt;div class="modal-overlay visible"&gt;
+  &lt;div class="modal"&gt;
+    &lt;div class="modal-header"&gt;
+      &lt;h2&gt;Modal Title&lt;/h2&gt;
+      &lt;button class="btn btn-icon btn-ghost"&gt;×&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class="modal-body"&gt;
+      &lt;p&gt;Modal content...&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="modal-footer"&gt;
+      &lt;button class="btn btn-ghost"&gt;Cancel&lt;/button&gt;
+      &lt;button class="btn btn-primary"&gt;Confirm&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Small Modal (Confirmation)</h4>
+                    </div>
+                    <p class="ds-usage-note">Compact modal for quick confirmations and destructive actions. Uses .modal-sm class for smaller width.</p>
+                    <div class="ds-preview" style="min-height: 400px; padding: var(--space-8) var(--space-4); position: relative; background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 100%); border-radius: var(--radius-lg); overflow: hidden;">
+                        <div class="modal-overlay visible" style="position: absolute; inset: 0;">
+                            <div class="modal modal-sm">
+                                <div class="modal-header">
+                                    <h2>Delete Bookmark?</h2>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you want to delete this bookmark?</p>
+                                    <p style="color: var(--text-tertiary); font-size: var(--text-sm); margin-top: var(--space-2);">This action cannot be undone.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-ghost">Cancel</button>
+                                    <button class="btn btn-danger">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre>&lt;div class="modal-overlay visible"&gt;
+  &lt;div class="modal modal-sm"&gt;
+    &lt;div class="modal-header"&gt;
+      &lt;h2&gt;Delete Bookmark?&lt;/h2&gt;
+    &lt;/div&gt;
+    &lt;div class="modal-body"&gt;
+      &lt;p&gt;Are you sure?&lt;/p&gt;
+      &lt;p class="text-tertiary text-sm"&gt;This action cannot be undone.&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="modal-footer"&gt;
+      &lt;button class="btn btn-ghost"&gt;Cancel&lt;/button&gt;
+      &lt;button class="btn btn-danger"&gt;Delete&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Onboarding -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Onboarding Overlay</h3>
+                <p class="ds-description-text">First-time user experience with multiple steps shown to new users on first launch.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Onboarding Welcome Screen</h4>
+                    </div>
+                    <p class="ds-usage-note">Full-screen overlay with animated icon and call-to-action buttons. Multiple steps are shown sequentially.</p>
+                    <div class="ds-preview" style="min-height: 400px; position: relative; background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 100%); border-radius: var(--radius-lg); overflow: hidden;">
+                        <div class="onboarding-overlay visible" style="position: absolute; inset: 0;">
+                            <div class="onboarding-content">
+                                <div class="onboarding-step active">
+                                    <div class="onboarding-icon">🚀</div>
+                                    <h2>Welcome to Hyper Launcher!</h2>
+                                    <p>Your ADHD-friendly bookmark manager.<br>Organize your web apps with ease.</p>
+                                    <div class="onboarding-actions">
+                                        <button class="btn btn-primary">Get Started</button>
+                                        <button class="btn btn-ghost">Skip Tour</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre>&lt;div class="onboarding-overlay visible"&gt;
+  &lt;div class="onboarding-content"&gt;
+    &lt;div class="onboarding-step active"&gt;
+      &lt;div class="onboarding-icon"&gt;🚀&lt;/div&gt;
+      &lt;h2&gt;Welcome to Hyper Launcher!&lt;/h2&gt;
+      &lt;p&gt;Your ADHD-friendly bookmark manager.&lt;/p&gt;
+      &lt;div class="onboarding-actions"&gt;
+        &lt;button class="btn btn-primary"&gt;Get Started&lt;/button&gt;
+        &lt;button class="btn btn-ghost"&gt;Skip Tour&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Add Popup -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Quick Add Popup (Fullpage Only)</h3>
+                <p class="ds-description-text">Centered popup for quickly adding custom URLs with destination and placement controls.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Quick Add Form</h4>
+                    </div>
+                    <p class="ds-usage-note">Compact form with URL input, optional name, destination toggles (Main/Sickbay), and placement toggles (Front/End).</p>
+                    <div class="ds-preview" style="min-height: 400px; position: relative; background: linear-gradient(135deg, #0a0a0a 0%, #1a0a1a 100%); border-radius: var(--radius-lg); overflow: hidden; display: flex; align-items: flex-start; justify-content: center; padding-top: var(--space-8);">
+                        <div class="quick-add-popup visible" style="position: relative;">
+                            <h3>Add Custom URL</h3>
+                            <form class="quick-add-form">
+                                <input type="text" class="quick-add-input" placeholder="example.com" value="github.com">
+                                <input type="text" class="quick-add-input" placeholder="Name (optional)" value="GitHub">
+
+                                <div class="quick-add-toggles">
+                                    <div class="toggle-group">
+                                        <button type="button" class="toggle-btn active">Main</button>
+                                        <button type="button" class="toggle-btn">Sickbay</button>
+                                    </div>
+                                    <div class="toggle-group">
+                                        <button type="button" class="toggle-btn active">Front</button>
+                                        <button type="button" class="toggle-btn">End</button>
+                                    </div>
+                                </div>
+
+                                <div class="quick-add-actions">
+                                    <button type="button" class="quick-add-btn">Cancel</button>
+                                    <button type="submit" class="quick-add-btn primary">Add Bookmark</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre>&lt;div class="quick-add-popup visible"&gt;
+  &lt;h3&gt;Add Custom URL&lt;/h3&gt;
+  &lt;form class="quick-add-form"&gt;
+    &lt;input type="text" class="quick-add-input" placeholder="example.com"&gt;
+    &lt;input type="text" class="quick-add-input" placeholder="Name (optional)"&gt;
+
+    &lt;div class="quick-add-toggles"&gt;
+      &lt;div class="toggle-group"&gt;
+        &lt;button type="button" class="toggle-btn active"&gt;Main&lt;/button&gt;
+        &lt;button type="button" class="toggle-btn"&gt;Sickbay&lt;/button&gt;
+      &lt;/div&gt;
+      &lt;div class="toggle-group"&gt;
+        &lt;button type="button" class="toggle-btn active"&gt;Front&lt;/button&gt;
+        &lt;button type="button" class="toggle-btn"&gt;End&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class="quick-add-actions"&gt;
+      &lt;button type="button" class="quick-add-btn"&gt;Cancel&lt;/button&gt;
+      &lt;button type="submit" class="quick-add-btn primary"&gt;Add Bookmark&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/form&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Components -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Search Components</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Search Area (Fullpage - Fixed Footer)</h4>
+                        <button class="ds-copy-btn" data-copy="search-area">Copy HTML</button>
+                    </div>
+                    <p class="ds-usage-note">This is the fixed footer search area used in fullpage.html with bookmark all tabs buttons.</p>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-search-area">&lt;div class="search-area"&gt;
+  &lt;div class="search-area-inner"&gt;
+    &lt;div class="bookmark-all-tabs"&gt;
+      &lt;button class="btn btn-primary"&gt;
+        &lt;span&gt;📑&lt;/span&gt;
+        &lt;span&gt;Bookmark All Tabs to Main&lt;/span&gt;
+      &lt;/button&gt;
+      &lt;button class="btn btn-secondary"&gt;
+        &lt;span&gt;📑&lt;/span&gt;
+        &lt;span&gt;Bookmark All Tabs to Sickbay&lt;/span&gt;
+      &lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class="search-container"&gt;
+      &lt;input type="search" class="search-input" placeholder="Search bookmarks..."&gt;
+      &lt;button class="search-clear"&gt;×&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Search Bar (Popup - Collapsible)</h4>
+                        <button class="ds-copy-btn" data-copy="search-bar">Copy HTML</button>
+                    </div>
+                    <p class="ds-usage-note">This is the collapsible search bar used in popup.html, toggled by the search icon button.</p>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-search-bar">&lt;div class="search-bar"&gt;
+  &lt;div class="search-input-container"&gt;
+    &lt;input type="search" class="search-input" placeholder="Search bookmarks..."&gt;
+    &lt;button class="search-clear-btn"&gt;×&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Stats -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Footer Statistics</h3>
+                <p class="ds-description-text">Stats display showing bookmark counts and current settings.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Stats Group (Fullpage)</h4>
+                        <button class="ds-copy-btn" data-copy="footer-stats">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div class="footer-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Total:</span>
+                                <span class="stat-value">42</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Sickbay:</span>
+                                <span class="stat-value has-sickbay">5</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">View:</span>
+                                <span class="stat-value">Grid</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Tab Mode:</span>
+                                <span class="stat-value">Background</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-footer-stats">&lt;div class="footer-stats"&gt;
+  &lt;div class="stat-item"&gt;
+    &lt;span class="stat-label"&gt;Total:&lt;/span&gt;
+    &lt;span class="stat-value"&gt;42&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="stat-item"&gt;
+    &lt;span class="stat-label"&gt;Sickbay:&lt;/span&gt;
+    &lt;span class="stat-value has-sickbay"&gt;5&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brand Section -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Branding</h3>
+                <p class="ds-description-text">Logo and version badge used in headers and footers.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Brand with Gradient Title</h4>
+                        <button class="ds-copy-btn" data-copy="brand">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview">
+                        <div class="footer-brand">
+                            <h1 class="brand-title">Hyper Launcher</h1>
+                            <span class="brand-badge">v3.1</span>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-brand">&lt;div class="footer-brand"&gt;
+  &lt;h1 class="brand-title"&gt;Hyper Launcher&lt;/h1&gt;
+  &lt;span class="brand-badge"&gt;v3.1&lt;/span&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Canvas Coming Soon (Popup Only) -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Canvas View Placeholder (Popup Only)</h3>
+                <p class="ds-description-text">A "coming soon" placeholder shown when users click the Canvas view button in the popup.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Canvas Coming Soon State</h4>
+                        <button class="ds-copy-btn" data-copy="canvas-coming-soon">Copy HTML</button>
+                    </div>
+                    <div class="ds-preview column">
+                        <div class="apps-canvas" style="display: flex; align-items: center; justify-content: center; min-height: 300px; background: var(--surface-base);">
+                            <div class="canvas-coming-soon">
+                                <div class="coming-soon-icon">🎨</div>
+                                <h3 class="coming-soon-title">Canvas View</h3>
+                                <p class="coming-soon-subtitle">Coming Soon!</p>
+                                <p class="coming-soon-description">
+                                    The Canvas view will let you freely position and organize your bookmarks
+                                    in a visual workspace.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-canvas-coming-soon">&lt;div class="apps-canvas"&gt;
+  &lt;div class="canvas-coming-soon"&gt;
+    &lt;div class="coming-soon-icon"&gt;🎨&lt;/div&gt;
+    &lt;h3 class="coming-soon-title"&gt;Canvas View&lt;/h3&gt;
+    &lt;p class="coming-soon-subtitle"&gt;Coming Soon!&lt;/p&gt;
+    &lt;p class="coming-soon-description"&gt;
+      The Canvas view will let you freely position and organize your bookmarks
+      in a visual workspace.
+    &lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Drop Zone (Popup Only) -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Drop Zone (Popup Only)</h3>
+                <p class="ds-description-text">An overlay that appears when dragging URLs into the popup, indicating where to drop.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Drag & Drop Zone</h4>
+                        <button class="ds-copy-btn" data-copy="drop-zone">Copy HTML</button>
+                    </div>
+                    <p class="ds-usage-note">This overlay is hidden by default and shown via JavaScript when drag events are detected.</p>
+                    <div class="ds-preview dark">
+                        <div class="drop-zone" style="position: relative; display: flex; opacity: 1;">
+                            <div class="drop-zone-content">
+                                <div class="drop-zone-icon">📎</div>
+                                <div class="drop-zone-text">Drop URL here to add bookmark</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">HTML</span>
+                        <pre id="code-drop-zone">&lt;div class="drop-zone"&gt;
+  &lt;div class="drop-zone-content"&gt;
+    &lt;div class="drop-zone-icon"&gt;📎&lt;/div&gt;
+    &lt;div class="drop-zone-text"&gt;Drop URL here to add bookmark&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- end ds-subsections-grid -->
+        </section>
+
+        <!-- ============================================
+             TEMPLATES
+             ============================================ -->
+        <section id="templates" class="ds-section">
+            <h2 class="ds-section-title">
+                <span>Templates</span>
+                <span class="ds-level-badge ds-level-templates">Level 4</span>
+            </h2>
+            <p class="ds-section-description">
+                Complete page layouts combining organisms, molecules, and atoms. These show how components work together to create full interfaces.
+            </p>
+
+            <!-- Headers Group - Single Column -->
+            <div class="ds-subsections-single">
+            <!-- Fullpage Header -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Fullpage Header Template</h3>
+                <p class="ds-description-text">The complete header used in fullpage.html with left actions, center controls, and right settings.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Full Header Layout</h4>
+                    </div>
+                    <div class="ds-preview dark full-width">
+                        <header class="top-header">
+                            <div class="header-left-actions">
+                                <button class="btn btn-primary">
+                                    <span>➕</span>
+                                    <span>Add Custom URL</span>
+                                </button>
+                                <button class="btn btn-ghost">
+                                    <span>↺</span>
+                                    <span>Undo</span>
+                                </button>
+                            </div>
+
+                            <div class="header-center">
+                                <div class="grid-layout-controls">
+                                    <button class="grid-size-btn">9</button>
+                                    <button class="grid-size-btn active">11</button>
+                                    <button class="grid-size-btn">22</button>
+                                </div>
+
+                                <div class="view-controls">
+                                    <button class="view-btn active">⊞</button>
+                                    <button class="view-btn">⊟</button>
+                                    <button class="view-btn">☰</button>
+                                </div>
+
+                                <button class="btn sickbay-btn active" style="position: relative;">
+                                    <span>🏥</span>
+                                    <span>Sickbay</span>
+                                    <span class="sickbay-badge" style="display: flex;">3</span>
+                                </button>
+                            </div>
+
+                            <div class="header-right-actions">
+                                <div class="tab-mode-toggle">
+                                    <span class="status-dot"></span>
+                                    <span class="status-text">open in background</span>
+                                </div>
+                                <button class="btn btn-icon">⚙️</button>
+                            </div>
+                        </header>
+                    </div>
+                    <p class="ds-usage-note">This header uses a 3-column flex layout: left actions (flex: 1), center controls (flex: 2), right actions (flex: 1). The sickbay button uses .active class when sickbay view is active, showing prominent orange highlighting with increased opacity and glow effect.</p>
+                </div>
+            </div>
+
+            <!-- Popup Header -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Popup Header Template</h3>
+                <p class="ds-description-text">The top actions bar used in popup.html with primary and secondary action groups.</p>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Popup Actions Bar</h4>
+                    </div>
+                    <div class="ds-preview dark full-width">
+                        <div class="top-actions-bar">
+                            <div class="primary-actions">
+                                <button class="btn btn-primary">⭐ Main</button>
+                                <button class="btn btn-secondary">⭐ Sickbay</button>
+                                <div style="position: relative; display: inline-block;">
+                                    <button class="btn">
+                                        <span>🏥</span>
+                                        <span>Sickbay</span>
+                                        <span class="sickbay-count visible">3</span>
+                                    </button>
+                                </div>
+                                <button class="btn btn-warning">Full Page</button>
+                            </div>
+                            <div class="secondary-actions">
+                                <button class="btn btn-icon">🔍</button>
+                                <button class="btn btn-icon">⋯</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- end headers group -->
+
+            <!-- Footers Group - Single Column -->
+            <div class="ds-subsections-single">
+            <!-- Footer Templates -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Footer Templates</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Fullpage Footer (with Stats)</h4>
+                    </div>
+                    <div class="ds-preview dark full-width">
+                        <footer class="footer">
+                            <div class="footer-left">
+                                <div class="footer-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-label">Total:</span>
+                                        <span class="stat-value">42</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Sickbay:</span>
+                                        <span class="stat-value has-sickbay">5</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">View:</span>
+                                        <span class="stat-value">Grid</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-label">Tab Mode:</span>
+                                        <span class="stat-value">Background</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="footer-right">
+                                <div class="footer-brand">
+                                    <h1 class="brand-title">Hyper Launcher</h1>
+                                    <span class="brand-badge">v3.1</span>
+                                </div>
+                            </div>
+                        </footer>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Popup Footer (with View Controls)</h4>
+                    </div>
+                    <div class="ds-preview dark full-width">
+                        <footer class="footer">
+                            <div class="header-info">
+                                <div class="header-brand">
+                                    <h1 class="header-title">Hyper Launcher</h1>
+                                    <span class="header-badge">v3.1</span>
+                                </div>
+                            </div>
+
+                            <div class="view-controls">
+                                <button class="view-btn active">⊞</button>
+                                <button class="view-btn">⊡</button>
+                                <button class="view-btn">⊟</button>
+                                <button class="view-btn">☰</button>
+                            </div>
+
+                            <div class="status-indicator">
+                                <span class="status-dot"></span>
+                                <span class="status-text">background tabs</span>
+                            </div>
+                        </footer>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- end footers group -->
+
+            <!-- Layout Patterns Group - Two Columns at 1024px+ -->
+            <div class="ds-subsections-2col">
+            <!-- Complete Layout Examples -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Complete Layout Structure</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Fullpage Layout Hierarchy</h4>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">Structure</span>
+                        <pre>.layout (flex column, 100vh)
+  ├── .top-header (fixed height, flex-shrink: 0)
+  │   ├── .header-left-actions (flex: 1)
+  │   ├── .header-center (flex: 2)
+  │   └── .header-right-actions (flex: 1)
+  ├── .main-content (flex: 1, overflow hidden)
+  │   ├── .content-area (flex: 1, overflow-y: auto)
+  │   │   └── .apps-container (padding, min-height: 100%)
+  │   │       └── .apps-grid (responsive grid)
+  │   └── .search-area (fixed position)
+  └── .footer (fixed height, flex-shrink: 0)
+      ├── .footer-left (.footer-stats)
+      └── .footer-right (.footer-brand)</pre>
+                    </div>
+                </div>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Popup Layout Hierarchy</h4>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">Structure</span>
+                        <pre>.container (flex column, 100vh, 480x600px)
+  ├── .top-actions-bar (fixed height)
+  │   ├── .primary-actions
+  │   └── .secondary-actions
+  ├── .search-bar (collapsible, hidden by default)
+  ├── .main-content (flex: 1, overflow hidden)
+  │   └── .apps-container (overflow-y: auto)
+  │       └── .apps-grid (responsive grid)
+  └── .footer (fixed height)
+      ├── .header-info
+      ├── .view-controls
+      └── .status-indicator</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Responsive Behavior -->
+            <div class="ds-subsection">
+                <h3 class="ds-subsection-title">Responsive Patterns</h3>
+
+                <div class="ds-card">
+                    <div class="ds-card-header">
+                        <h4 class="ds-card-title">Breakpoints & Adaptations</h4>
+                    </div>
+                    <div class="ds-code">
+                        <span class="ds-code-lang">CSS</span>
+                        <pre>/* Desktop (default): 1400px+ */
+.comfortable .apps-grid {
+  grid-template-columns: repeat(11, minmax(100px, 1fr));
+  max-width: 1400px;
+}
+
+/* Laptop: 1200px-1400px */
+@media (max-width: 1400px) {
+  .comfortable .apps-grid {
+    grid-template-columns: repeat(9, 1fr);
+    max-width: 1200px;
+  }
+}
+
+/* Tablet: 768px-1200px */
+@media (max-width: 1200px) {
+  .apps-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}
+
+/* Mobile: <768px */
+@media (max-width: 768px) {
+  .top-header {
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .app-tile {
+    height: 100px;
+    padding: var(--space-3);
+  }
+}</pre>
+                    </div>
+                </div>
+            </div>
+            </div> <!-- end layout patterns group -->
+        </section>
+
+        <!-- Footer -->
+        <footer class="ds-footer">
+            <h2 class="ds-footer-title">Hyper Launcher Design System</h2>
+            <p>Complete atomic design system: Tokens → Atoms → Molecules → Organisms → Templates</p>
+            <p style="margin-top: var(--space-2); font-size: var(--text-sm);">
+                All components use the same CSS from <code>design-system.css</code> as the production extension
+            </p>
+            <p style="margin-top: var(--space-2); font-size: var(--text-xs); color: var(--text-disabled);">
+                Last updated: v3.1 | Built with atomic design methodology
+            </p>
+        </footer>
+    </div>
+
+    <script src="designsystem.js"></script>
+</body>
+</html>
